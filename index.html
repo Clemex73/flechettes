@@ -26,6 +26,7 @@
   --bg0:#F6EFE4;
   --bg1:#EFE4D4;
 
+  --bgSolid: rgba(246,239,228,.92);
   --surface: rgba(255,255,255,.62);   /* cartes */
   --surface2: rgba(255,255,255,.42);  /* sous-cartes */
   --surface3: rgba(255,255,255,.30);  /* éléments (chips/tabs) */
@@ -639,7 +640,7 @@
 
       /* Setup card pushed down so logo is visible */
       #setup{
-        margin-top: 18vh;
+        margin-top: 6vh;
       }
       #setup.card{
         background: rgba(255,255,255,.46);
@@ -932,10 +933,7 @@
 
 /* Fond plus clean (sans watermark) */
 body{
-  background:
-    radial-gradient(900px 700px at 15% 0%, rgba(196,43,43,.06), transparent 60%),
-    radial-gradient(900px 700px at 85% 10%, rgba(23,21,19,.05), transparent 60%),
-    linear-gradient(180deg, var(--bg0), var(--bg1));
+ background: var(--bgSolid);
 }
 
 /* Carte setup = plus premium */
@@ -1993,6 +1991,7 @@ body{
   </script>
 </body>
 </html>
+
 
 
 
