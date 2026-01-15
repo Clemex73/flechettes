@@ -353,163 +353,182 @@
        MOBILE: NO VERTICAL SCROLL
        ========================= */
     @media (max-width: 640px){
-    /* ✅ iPhone: hauteur réellement visible */
-    body{
-      overflow: hidden;
-      height: 100dvh;
-    }
-  
-    .wrap{
-      padding: 12px;
-      max-width: 100%;
-      height: 100dvh;
-    }
-  
-    header{ margin: 6px 0 10px; }
-    header h1{ font-size: 16px; }
-    .card{ padding: 12px; }
-  
-    /* ✅ Le game prend exactement la hauteur visible */
-    #game{
-      height: 100%;
-      display:flex;
-      flex-direction: column;
-      overflow:hidden;
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-  
-    .mobilePanels{
-      margin-top: 8px;
-      flex: 1;
-      overflow: hidden;
-      display:flex;
-      flex-direction: column;
-      min-height: 0;
-    }
-    
-    .panel{
-      display:none;
-      flex: 1;
-      overflow:auto;     /* ✅ important */
-      min-height: 0;
-      padding-bottom: 10px;
-    }
-    .panel.active{ display:block; }
 
+  /* 1) Pas de scroll, vraie hauteur iOS */
+  html, body { height: 100%; }
+  body{
+    overflow: hidden;
+    height: 100dvh;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .wrap{
+    max-width: 100%;
+    height: 100dvh;
+    padding: 10px;
+    display:flex;
+    flex-direction: column;
+  }
 
-      /* Hide big desktop scoreboard grid; use compact top strip instead */
-      .scoreboard{ display:none; }
+  /* 2) Header + top badge ultra compact */
+  header{ margin: 4px 0 8px; }
+  header h1{ font-size: 15px; }
+  .badge{ padding: 6px 10px; font-size: 11px; }
 
-      /* Compact top players strip */
-      .mobilePlayers{
-        display:flex;
-        gap:8px;
-        overflow-x:auto;
-        padding-bottom: 8px;
-        margin-top: 10px;
-        -webkit-overflow-scrolling: touch;
-      }
-      .mpCard{
-        flex: 0 0 auto;
-        min-width: 122px;
-        border-radius: 14px;
-        border:1px solid rgba(255,255,255,.12);
-        background: rgba(255,255,255,.05);
-        padding: 8px 10px;
-      }
-      .mpCard.active{
-        background: rgba(43,101,255,.16);
-        border-color: rgba(43,101,255,.45);
-        outline: 2px solid rgba(43,101,255,.25);
-      }
-      .mpTop{
-        display:flex; justify-content:space-between; gap:8px; align-items:center;
-        font-size: 11px; color: var(--muted);
-      }
-      .mpName{
-        font-size: 12px;
-        font-weight: 950;
-        color: var(--text);
-        white-space: nowrap;
-        overflow:hidden;
-        text-overflow: ellipsis;
-        max-width: 92px;
-      }
-      .mpScore{
-        font-size: 18px;
-        font-weight: 950;
-        margin-top: 4px;
-      }
+  /* 3) Game = colonne fixe, sans débordement */
+  #game{
+    margin-top: 10px !important;
+    flex: 1;
+    min-height: 0;
+    display:flex;
+    flex-direction: column;
+    overflow:hidden;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 
-      /* Turn banner compact */
-      .turnBanner{ margin-top: 8px; padding: 10px; }
-      .kbd{ display:none; } /* on mobile, hide shortcuts row */
+  /* 4) On cache la grille desktop */
+  .grid2{ display:none !important; }
+  .scoreboard{ display:none !important; }
 
-      /* Tabs for mobile views */
-      .tabs{
-        margin-top: 8px;
-        display:flex;
-        gap:8px;
-        border:1px solid rgba(255,255,255,.10);
-        background: rgba(255,255,255,.05);
-        border-radius: 999px;
-        padding: 6px;
-      }
-      .tabs button{
-        width:auto;
-        flex: 1;
-        padding: 9px 10px;
-        border-radius: 999px;
-        background: transparent;
-        border:1px solid transparent;
-        box-shadow:none;
-        color: var(--muted);
-        font-weight: 950;
-      }
-      .tabs button.active{
-        background: rgba(43,101,255,.20);
-        border-color: rgba(43,101,255,.35);
-        color: var(--text);
-      }
+  /* 5) Bandeau joueurs en haut (1 ligne scroll horizontal OK) */
+  .mobilePlayers{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;            /* ✅ horizontal autorisé, pas vertical */
+    overflow-y:hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    margin-top: 8px;
+  }
+  .mpCard{ min-width: 112px; padding: 7px 9px; border-radius: 14px; }
+  .mpTop{ font-size: 10px; }
+  .mpName{ font-size: 12px; max-width: 84px; }
+  .mpScore{ font-size: 16px; margin-top: 3px; }
 
-      /* Make console super compact */
-      .console{ padding: 10px; }
-      .readout{ margin-top: 0; gap:8px; }
-      .chip{ padding: 6px 9px; font-size: 11px; }
-      .dartsRow{ gap:8px; margin-top: 8px; }
-      .dartSlot{ min-height: 56px; padding: 10px; }
-      .dartSlot .label{ font-size: 12px; }
-      .dartSlot .pts{ font-size: 14px; }
-      .totalBox{ margin-top: 8px; padding: 10px; }
-      .totalBox .total{ font-size: 22px; }
-      .selector{ margin-top: 8px; }
-      .toggles{ padding: 5px; gap:6px; }
-      .toggles button{ padding: 7px 10px; }
-      .quickRow{ margin-top: 8px; }
-      .miniBtn{ padding: 8px 10px; border-radius: 12px; }
-      .numbers{
-        margin-top: 8px;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 8px;
-      }
-      .numBtn{ padding: 11px 0; border-radius: 14px; font-size: 14px; }
+  /* 6) Tour banner compact */
+  .turnBanner{ margin-top: 6px; padding: 8px 10px; }
+  .turnBanner b{ font-size: 13px; }
+  .kbd{ display:none; }
 
-      .actionsRow{ margin-top: 8px; gap:8px; }
-      .actionsRow > *{ flex: 1 1 120px; }
-      #rulesNote{ display:none; } /* pour gagner de la place */
+  /* 7) Tabs visibles */
+  .tabs{
+    display:flex;
+    gap:6px;
+    margin-top: 6px;
+    padding: 5px;
+    border-radius: 999px;
+  }
+  .tabs button{
+    padding: 8px 8px;
+    font-size: 12px;
+  }
 
-      /* Cricket board on mobile: make rows tighter */
-      .cricketLegend{ display:none; }
-      .cRow{ grid-template-columns: 72px 1fr; }
-      .cTarget{ padding: 8px 8px; font-size: 12px; }
-      .cCell{ padding: 8px 6px; }
-      .cHeaderRow{ margin-top: 8px; }
-      .cHeaderLeft{ padding: 8px 8px; font-size: 11px; }
-      .cHeaderCell{ padding: 8px 6px; font-size: 11px; }
+  /* 8) Panels = plein espace restant, aucun scroll vertical */
+  .mobilePanels{
+    display:flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow:hidden;
+    margin-top: 6px;
+  }
+  .panel{
+    display:none;
+    flex: 1;
+    min-height: 0;
+    overflow:hidden;  /* ✅ NO SCROLL */
+  }
+  .panel.active{ display:block; }
 
-      /* History panel: internal scroll only */
-      .history{ max-height: none; height: 100%; overflow:auto; }
-    }
+  /* 9) Console devient un layout "qui rentre" */
+  .console{
+    padding: 8px;
+    height: 100%;
+    display:flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow:hidden;
+  }
+
+  /* 10) Ligne du haut (chips + boutons) compressée */
+  .readout{ margin-top: 0; gap:6px; }
+  .chip{ padding: 5px 8px; font-size: 10px; }
+  .chips button{ padding: 8px 10px; font-size: 12px; }
+
+  /* 11) DartsRow + Total super petits */
+  .dartsRow{
+    margin-top: 6px;
+    gap:6px;
+  }
+  .dartSlot{
+    min-height: 46px;
+    padding: 8px;
+    border-radius: 14px;
+  }
+  .dartSlot .label{ font-size: 11px; }
+  .dartSlot .pts{ font-size: 13px; }
+
+  .totalBox{
+    margin-top: 6px;
+    padding: 8px 10px;
+    border-radius: 14px;
+  }
+  .totalBox b{ font-size: 12px; }
+  .totalBox .total{ font-size: 20px; }
+
+  /* 12) Multiplicateurs + hint très compacts */
+  .selector{ margin-top: 6px; }
+  .toggles{ padding: 4px; gap:5px; }
+  .toggles button{ padding: 6px 8px; font-size: 12px; }
+  #hint{ font-size: 10px; }
+
+  /* 13) Boutons rapides compacts */
+  .quickRow{ margin-top: 6px; gap:6px; }
+  .miniBtn{ padding: 7px 9px; font-size: 12px; border-radius: 12px; }
+
+  /* 14) ✅ Le clavier (1–20) prend TOUT l’espace restant */
+  .numbers{
+    margin-top: 6px;
+    flex: 1;                 /* 🔥 prend le reste de la hauteur */
+    min-height: 0;
+    display:grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    overflow:hidden;         /* ✅ NO SCROLL */
+  }
+  .numbers .numBtn{
+    padding: 0;              /* on retire le padding */
+    height: 100%;            /* chaque bouton remplit sa cellule */
+    border-radius: 14px;
+    font-size: 13px;
+  }
+
+  /* 15) Bouton Valider compact (pas sticky, pas scroll) */
+  .actionsRow{
+    margin-top: 6px;
+    gap:6px;
+  }
+  #applyBtn{
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  /* 16) On masque le texte d’aide pour gagner de la place */
+  #rulesNote{ display:none !important; }
+
+  /* 17) Cricket + History: pas de scroll non plus */
+  .history{ height: 100%; overflow:hidden; max-height: none; }
+  .cricketLegend{ display:none; }
+  .cRow{ grid-template-columns: 68px 1fr; }
+  .cTarget{ padding: 7px 7px; font-size: 12px; }
+  .cCell{ padding: 7px 5px; }
+  .cHeaderLeft{ padding: 7px 7px; font-size: 11px; }
+  .cHeaderCell{ padding: 7px 5px; font-size: 11px; }
+
+  /* 18) Mobile-only visible */
+  .mobilePlayers, .tabs, .mobilePanels { display:flex; }
+}
+
 
     /* Mobile-only elements hidden on desktop */
     .mobilePlayers, .tabs, .mobilePanels { display:none; }
@@ -1454,5 +1473,6 @@
 
 </body>
 </html>
+
 
 
