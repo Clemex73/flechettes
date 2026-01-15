@@ -1,0 +1,1188 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+
+  <!-- ✅ iPhone/PWA friendly viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>Fléchettes – Scoreboard</title>
+
+  <!-- ✅ PWA (GitHub Pages + install iPhone) -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#2b65ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    :root{
+      --bg:#070b14;
+      --border:rgba(255,255,255,.10);
+      --text:#e9eefc;
+      --muted:rgba(233,238,252,.70);
+      --muted2:rgba(233,238,252,.50);
+      --accent:#2b65ff;
+      --danger:#ff3b3b;
+      --ok:#8dff9c;
+      --warn:#ffb36a;
+      --radius:18px;
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 20% 0%, rgba(43,101,255,.25), transparent 55%),
+                  radial-gradient(900px 600px at 90% 20%, rgba(141,255,156,.14), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+      /* ✅ iPhone safe areas */
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      margin: 6px 0 14px;
+    }
+    header h1{ margin:0; font-size: 18px; letter-spacing:.2px; }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px; border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      box-shadow: var(--shadow);
+      font-size: 12px; color: var(--muted);
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    .row{display:flex; gap:12px; flex-wrap:wrap;}
+    .col{flex: 1 1 300px;}
+    label{display:block; font-size: 12px; color: var(--muted); margin: 10px 0 6px;}
+    select,input,button{
+      width:100%;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(7,11,20,.55);
+      color: var(--text);
+      outline:none;
+    }
+    button{
+      cursor:pointer;
+      font-weight: 800;
+      border-color: transparent;
+      background: linear-gradient(180deg, rgba(43,101,255,1), rgba(43,101,255,.78));
+      box-shadow: 0 10px 28px rgba(43,101,255,.25);
+      transition: transform .06s ease, filter .15s ease;
+    }
+    button:hover{ filter: brightness(1.06); }
+    button:active{ transform: translateY(1px); }
+    button.secondary{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.14);
+      box-shadow: none;
+      font-weight: 750;
+    }
+    button.danger{
+      background: linear-gradient(180deg, rgba(255,59,59,1), rgba(255,59,59,.76));
+      box-shadow: 0 10px 28px rgba(255,59,59,.20);
+    }
+    button:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+    .muted{ color: var(--muted2); font-size: 12px; }
+    .hr{ height:1px; background: rgba(255,255,255,.10); margin: 12px 0; }
+
+    .scoreboard{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .player{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding: 12px;
+      position: relative;
+      overflow:hidden;
+    }
+    .player.active{
+      background: rgba(43,101,255,.16);
+      border-color: rgba(43,101,255,.45);
+      outline: 2px solid rgba(43,101,255,.35);
+    }
+    .player.active::before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(600px 220px at 20% 0%, rgba(43,101,255,.35), transparent 55%);
+      pointer-events:none;
+    }
+    .phead{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+    .phead b{font-size: 14px}
+    .status{font-size:12px; color: var(--muted);}
+    .big{ font-size: 38px; font-weight: 900; margin: 10px 0 2px; letter-spacing:.3px; }
+    .small{ font-size: 12px; color: var(--muted2); }
+    .win{ color: var(--ok); font-weight: 900; }
+    .bust{ color: var(--warn); font-weight: 900; }
+
+    .grid2{ display:grid; grid-template-columns: 1.12fr .88fr; gap: 12px; }
+    @media (max-width: 860px){ .grid2{ grid-template-columns: 1fr; } }
+
+    .turnBanner{
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .turnBanner b{font-size: 14px}
+    .kbd{ font-size: 11px; color: var(--muted); display:flex; gap:8px; flex-wrap:wrap; }
+    .kbd span{ padding: 4px 8px; border-radius: 999px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); }
+
+    .console{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      padding: 12px;
+    }
+    .readout{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin-top: 8px;
+    }
+    .chips{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .chip{
+      padding: 7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .chip b{ color: var(--text); font-weight: 900; }
+    .dartsRow{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .dartSlot{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      padding: 12px;
+      min-height: 68px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .dartSlot .label{ font-size: 14px; font-weight: 900; }
+    .dartSlot .pts{ font-size: 18px; font-weight: 900; }
+    .dartSlot.empty{ opacity:.55; }
+    .totalBox{
+      border-radius: 16px;
+      border:1px solid rgba(43,101,255,.35);
+      background: rgba(43,101,255,.14);
+      padding: 12px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-top: 10px;
+    }
+    .totalBox b{font-size: 14px}
+    .totalBox .total{ font-size: 28px; font-weight: 950; }
+
+    .selector{
+      margin-top: 12px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .toggles{
+      display:flex; gap:8px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 999px;
+      padding: 6px;
+    }
+    .toggles button{
+      width:auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: transparent;
+      border:1px solid transparent;
+      box-shadow:none;
+      font-weight: 900;
+      color: var(--muted);
+    }
+    .toggles button.active{
+      background: rgba(43,101,255,.20);
+      border-color: rgba(43,101,255,.35);
+      color: var(--text);
+    }
+
+    .quickRow{
+      display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px;
+    }
+    .miniBtn{
+      width:auto;
+      padding: 9px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:none;
+      font-weight: 900;
+    }
+
+    .numbers{
+      margin-top: 10px;
+      display:grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+    @media (max-width: 520px){
+      .numbers{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    .numBtn{
+      padding: 12px 0;
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:none;
+      font-size: 15px;
+      font-weight: 950;
+    }
+
+    .actionsRow{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px;
+    }
+    .actionsRow > *{ flex: 1 1 160px; }
+
+    .history{ max-height: 360px; overflow:auto; border-radius: var(--radius); border:1px solid rgba(255,255,255,.10); }
+    .hist-item{ padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08); font-size: 13px; }
+    .hist-item:last-child{ border-bottom:none; }
+
+    /* --- Cricket board --- */
+    .cricketWrap{ margin-top: 12px; }
+    .cricketTitle{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
+    .cricketLegend{ display:flex; gap:8px; flex-wrap:wrap; }
+    .cricketLegend .chip{ font-size: 11px; }
+    .cricketGrid{
+      margin-top: 10px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    .cRow{
+      display:grid;
+      grid-template-columns: 90px 1fr;
+      gap: 0;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+    }
+    .cRow:last-child{ border-bottom:none; }
+    .cTarget{
+      padding: 10px 12px;
+      font-weight: 950;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-right:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+    }
+    .cCells{
+      display:grid;
+      gap: 0;
+    }
+    .cCell{
+      padding: 10px 10px;
+      border-right:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:center;
+      font-weight: 900;
+      color: var(--muted);
+      position: relative;
+    }
+    .cCell:last-child{ border-right:none; }
+    .cCell.active{
+      background: rgba(43,101,255,.12);
+      color: var(--text);
+    }
+    .cCell.closed{
+      color: var(--ok);
+    }
+    .cCell .marks{
+      letter-spacing: 1px;
+      font-size: 14px;
+    }
+    .cTarget .openTag{
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-weight: 900;
+    }
+    .cTarget .openTag.allclosed{
+      border-color: rgba(141,255,156,.35);
+      background: rgba(141,255,156,.10);
+      color: var(--ok);
+    }
+    .cTarget .openTag.open{
+      border-color: rgba(43,101,255,.35);
+      background: rgba(43,101,255,.12);
+      color: var(--text);
+    }
+    .cHeaderRow{
+      display:grid;
+      grid-template-columns: 90px 1fr;
+      border-radius: var(--radius);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      margin-top: 10px;
+    }
+    .cHeaderLeft{
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      border-right:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      font-weight: 900;
+    }
+    .cHeaderRight{
+      display:grid;
+      background: rgba(255,255,255,.03);
+    }
+    .cHeaderCell{
+      padding: 10px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      text-align:center;
+      border-right:1px solid rgba(255,255,255,.08);
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+    .cHeaderCell:last-child{ border-right:none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🎯 Fléchettes – Scoreboard</h1>
+      <div class="badge" id="topBadge">Prêt</div>
+    </header>
+
+    <!-- SETUP -->
+    <div id="setup" class="card">
+      <div class="row">
+        <div class="col">
+          <label>Mode de jeu</label>
+          <select id="mode">
+            <option value="x01">X01 (301 / 501 / 701) – bust</option>
+            <option value="countup">Count Up – addition</option>
+            <option value="cricket">Cricket (20→15 + Bull)</option>
+          </select>
+
+          <label>Score de départ (X01)</label>
+          <select id="startScore">
+            <option value="301">301</option>
+            <option value="501" selected>501</option>
+            <option value="701">701</option>
+          </select>
+
+          <label>Nombre de joueurs</label>
+          <select id="numPlayers">
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+
+          <div class="muted" style="margin-top:10px">
+            S/D/T + numéro. En <b>Cricket</b>, seuls 15–20 + Bull comptent.
+          </div>
+        </div>
+
+        <div class="col">
+          <label>Noms des joueurs</label>
+          <div id="names"></div>
+          <div class="muted" style="margin-top:10px">Vide = “Joueur 1”, etc.</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+      <div class="actionsRow">
+        <button id="startBtn">Démarrer</button>
+        <button id="loadBtn" class="secondary">Reprendre la dernière partie</button>
+      </div>
+    </div>
+
+    <!-- GAME -->
+    <div id="game" class="card" style="display:none; margin-top: 14px;">
+      <div class="row" style="align-items:center; justify-content:space-between;">
+        <div class="badge" id="modeBadge">Mode</div>
+        <div class="actionsRow" style="max-width:420px;">
+          <button id="newGameBtn" class="secondary">Nouvelle partie</button>
+          <button id="resetBtn" class="danger">Réinitialiser</button>
+        </div>
+      </div>
+
+      <div class="scoreboard" id="scoreboard"></div>
+
+      <div class="turnBanner">
+        <b id="turnLabel">—</b>
+        <div class="kbd">
+          <span>Entrée = Valider</span>
+          <span>Backspace = Retour</span>
+          <span>Esc = Effacer</span>
+        </div>
+      </div>
+
+      <!-- Cricket target board -->
+      <div id="cricketBoard" class="cricketWrap" style="display:none;">
+        <div class="cricketTitle">
+          <b>🎯 Cible Cricket</b>
+          <div class="cricketLegend">
+            <span class="chip">Marques : <b>/</b> = 1, <b>X</b> = 2, <b>◉</b> = 3 (fermé)</span>
+            <span class="chip">“Open” = le joueur actif peut scorer</span>
+            <span class="chip">“All closed” = fermé pour tous</span>
+          </div>
+        </div>
+
+        <div class="cHeaderRow" id="cHeaderRow"></div>
+        <div class="cricketGrid" id="cGrid"></div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="grid2">
+        <!-- CONSOLE -->
+        <div class="console">
+          <div class="readout">
+            <div class="chips">
+              <span class="chip">Fléchettes : <b id="dartsCount">0</b>/3</span>
+              <span class="chip">Mode tir : <b id="multLabel">S</b></span>
+            </div>
+            <div class="chips">
+              <button id="undoBtn" class="secondary" style="width:auto">Annuler tour</button>
+              <button id="backBtn" class="secondary" style="width:auto">← Retour</button>
+              <button id="clearBtn" class="secondary" style="width:auto">Effacer</button>
+            </div>
+          </div>
+
+          <div class="dartsRow" id="dartsRow"></div>
+
+          <div class="totalBox">
+            <b>Total du tour</b>
+            <div class="total" id="turnTotal">0</div>
+          </div>
+
+          <div class="selector">
+            <div class="toggles" role="tablist" aria-label="Multiplicateur">
+              <button id="mS" class="active" type="button">S</button>
+              <button id="mD" type="button">D</button>
+              <button id="mT" type="button">T</button>
+            </div>
+            <div class="muted" id="hint">S = simple (x1)</div>
+          </div>
+
+          <div class="quickRow">
+            <button class="miniBtn" id="missBtn" type="button">MISS (0)</button>
+            <button class="miniBtn" id="sbBtn" type="button">SB (25)</button>
+            <button class="miniBtn" id="dbBtn" type="button">DB (50)</button>
+          </div>
+
+          <div class="numbers" id="numbers"></div>
+
+          <div class="actionsRow">
+            <button id="applyBtn">Valider le tour</button>
+          </div>
+
+          <div class="muted" style="margin-top:10px" id="rulesNote">
+            X01 : si le total fait passer sous 0 → <b>bust</b>. Tu peux valider avec 1, 2 ou 3 fléchettes.
+          </div>
+        </div>
+
+        <!-- HISTORY -->
+        <div class="card" style="background: rgba(255,255,255,.03);">
+          <b>Historique</b>
+          <div class="muted" style="margin:6px 0 10px">Derniers tours en haut</div>
+          <div class="history" id="history"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  const setupEl = $("setup");
+  const gameEl = $("game");
+
+  const topBadge = $("topBadge");
+  const modeBadge = $("modeBadge");
+
+  const modeEl = $("mode");
+  const startScoreEl = $("startScore");
+  const numPlayersEl = $("numPlayers");
+  const namesWrap = $("names");
+
+  const startBtn = $("startBtn");
+  const loadBtn = $("loadBtn");
+
+  const scoreboardEl = $("scoreboard");
+  const historyEl = $("history");
+  const turnLabelEl = $("turnLabel");
+
+  const cricketBoardEl = $("cricketBoard");
+  const cHeaderRowEl = $("cHeaderRow");
+  const cGridEl = $("cGrid");
+
+  const rulesNoteEl = $("rulesNote");
+
+  const applyBtn = $("applyBtn");
+  const undoBtn = $("undoBtn");
+  const resetBtn = $("resetBtn");
+  const newGameBtn = $("newGameBtn");
+
+  // Dart console
+  const dartsCountEl = $("dartsCount");
+  const dartsRowEl = $("dartsRow");
+  const turnTotalEl = $("turnTotal");
+  const backBtn = $("backBtn");
+  const clearBtn = $("clearBtn");
+
+  // Mult toggles
+  const mS = $("mS"), mD = $("mD"), mT = $("mT");
+  const multLabelEl = $("multLabel");
+  const hintEl = $("hint");
+
+  // quick
+  const missBtn = $("missBtn"), sbBtn = $("sbBtn"), dbBtn = $("dbBtn");
+  const numbersEl = $("numbers");
+
+  const STORAGE_KEY = "flechettes_app_state_v4_cricket";
+  const CRICKET_TARGETS = [20,19,18,17,16,15,"B"];
+  const BULL_POINTS_PER_MARK = 25;
+
+  let state = null;
+
+  function renderNameInputs() {
+    const n = Number(numPlayersEl.value);
+    namesWrap.innerHTML = "";
+    for (let i=0;i<n;i++) {
+      const inp = document.createElement("input");
+      inp.type = "text";
+      inp.placeholder = `Joueur ${i+1}`;
+      inp.id = `name_${i}`;
+      inp.style.marginBottom = "8px";
+      namesWrap.appendChild(inp);
+    }
+  }
+
+  function createCricketMarks(numPlayers){
+    const marks = [];
+    for (let i=0;i<numPlayers;i++){
+      const obj = {};
+      CRICKET_TARGETS.forEach(t => obj[String(t)] = 0);
+      marks.push(obj);
+    }
+    return marks;
+  }
+
+  function createGameFromSetup() {
+    const mode = modeEl.value;
+    const n = Number(numPlayersEl.value);
+    const startScore = Number(startScoreEl.value);
+
+    const names = [];
+    for (let i=0;i<n;i++) {
+      const v = ($(`name_${i}`)?.value || "").trim();
+      names.push(v || `Joueur ${i+1}`);
+    }
+
+    const players = names.map(name => ({
+      name,
+      score: (mode === "x01") ? startScore : 0,
+      turns: 0,
+      isWinner: false
+    }));
+
+    const st = {
+      mode,
+      startScore,
+      players,
+      current: 0,
+      finished: false,
+      history: [],
+      undoStack: [],
+      currentDarts: [],
+      mult: 1
+    };
+
+    if (mode === "cricket"){
+      st.cricket = { marks: createCricketMarks(n) };
+    }
+
+    return st;
+  }
+
+  function saveState() { if (state) localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  function loadState() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch { return null; }
+  }
+
+  function showSetup(){ setupEl.style.display=""; gameEl.style.display="none"; topBadge.textContent="Prêt"; }
+  function showGame(){ setupEl.style.display="none"; gameEl.style.display=""; }
+
+  function fmtMode(mode){ return mode === "x01" ? "X01" : (mode === "countup" ? "Count Up" : "Cricket"); }
+
+  function pushUndoSnapshot(){
+    state.undoStack.unshift(JSON.parse(JSON.stringify({
+      players: state.players,
+      current: state.current,
+      finished: state.finished,
+      history: state.history,
+      currentDarts: state.currentDarts,
+      mult: state.mult,
+      cricket: state.cricket
+    })));
+    if (state.undoStack.length > 50) state.undoStack.pop();
+  }
+
+  function setFinished(winnerIndex){
+    state.finished = true;
+    state.players.forEach((p, i) => p.isWinner = (i===winnerIndex));
+  }
+
+  function nextPlayer(){
+    if (state.finished) return;
+    state.current = (state.current + 1) % state.players.length;
+  }
+
+  function escapeHtml(s){
+    return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+
+  function setMult(m){
+    state.mult = m;
+    mS.classList.toggle("active", m===1);
+    mD.classList.toggle("active", m===2);
+    mT.classList.toggle("active", m===3);
+    multLabelEl.textContent = m===1?"S":m===2?"D":"T";
+    hintEl.textContent = m===1?"S = simple (x1)" : m===2?"D = double (x2)" : "T = triple (x3)";
+    saveState();
+  }
+
+  function getTotal(){
+    return (state.currentDarts||[]).reduce((s,d)=>s+(d.points||0),0);
+  }
+
+  function updateConsole(){
+    const darts = state.currentDarts || [];
+    dartsCountEl.textContent = darts.length;
+
+    dartsRowEl.innerHTML = "";
+    for (let i=0;i<3;i++){
+      const d = darts[i];
+      const slot = document.createElement("div");
+      slot.className = "dartSlot" + (d ? "" : " empty");
+      slot.innerHTML = d
+        ? `<div><div class="muted">Fléchette ${i+1}</div><div class="label">${escapeHtml(d.label)}</div></div>
+           <div class="pts">${d.points}</div>`
+        : `<div><div class="muted">Fléchette ${i+1}</div><div class="label">—</div></div>
+           <div class="pts"> </div>`;
+      dartsRowEl.appendChild(slot);
+    }
+
+    const total = getTotal();
+    turnTotalEl.textContent = total;
+
+    const full = darts.length >= 3 || state.finished;
+    numbersEl.querySelectorAll("button").forEach(b => b.disabled = full || b.dataset.disabled === "1");
+    missBtn.disabled = full;
+    sbBtn.disabled = full;
+    dbBtn.disabled = full;
+
+    backBtn.disabled = darts.length === 0 || state.finished;
+    clearBtn.disabled = darts.length === 0 || state.finished;
+
+    applyBtn.disabled = state.finished || darts.length === 0;
+    undoBtn.disabled = state.undoStack.length === 0;
+
+    const p = state.players[state.current];
+    modeBadge.textContent = `${fmtMode(state.mode)} • ${state.mode==="x01" ? "Départ "+state.startScore : (state.mode==="cricket" ? "20→15 + Bull" : "Addition")}`;
+    topBadge.textContent = state.finished ? "Partie terminée" : `À toi : ${p.name}`;
+  }
+
+  function addDart(label, points, meta=null){
+    if (!state || state.finished) return;
+    if (state.currentDarts.length >= 3) return;
+    state.currentDarts.push({label, points, meta});
+    updateConsole(); saveState();
+  }
+
+  function addNumber(n){
+    const m = state.mult || 1;
+    if (state.mode === "cricket" && n < 15) return;
+    const pts = n * m;
+    const prefix = m===1?"S":m===2?"D":"T";
+    addDart(`${prefix}${n}`, pts, { type:"num", n, mult:m });
+  }
+
+  function backDart(){
+    if (!state || state.finished) return;
+    state.currentDarts.pop();
+    updateConsole(); saveState();
+  }
+
+  function clearDarts(){
+    if (!state || state.finished) return;
+    state.currentDarts = [];
+    updateConsole(); saveState();
+  }
+
+  function renderScoreboard(){
+    scoreboardEl.innerHTML = "";
+    state.players.forEach((p, idx) => {
+      const div = document.createElement("div");
+      div.className = "player" + (idx === state.current ? " active" : "");
+      const status = p.isWinner ? `<span class="win">GAGNANT</span>` : (state.finished ? `<span class="status">Terminé</span>` : `<span class="status">Tour #${p.turns + 1}</span>`);
+      div.innerHTML = `
+        <div class="phead">
+          <b>${escapeHtml(p.name)}</b>
+          ${status}
+        </div>
+        <div class="big">${p.score}</div>
+        <div class="small">Tours joués : ${p.turns}</div>
+      `;
+      scoreboardEl.appendChild(div);
+    });
+  }
+
+  function renderHistory(){
+    historyEl.innerHTML = "";
+    if (state.history.length === 0){
+      const empty = document.createElement("div");
+      empty.className = "hist-item";
+      empty.innerHTML = `<span class="muted">Aucun tour pour l’instant.</span>`;
+      historyEl.appendChild(empty);
+      return;
+    }
+    state.history.slice(0,40).forEach(h => {
+      const tag = h.kind === "bust" ? `<span class="bust">BUST</span>` :
+                  h.kind === "win" ? `<span class="win">WIN</span>` : `<span class="muted">OK</span>`;
+      const dartsTxt = h.darts?.length ? h.darts.join(" • ") : "—";
+      const item = document.createElement("div");
+      item.className = "hist-item";
+      item.innerHTML = `
+        <div><b>${escapeHtml(h.player)}</b> — <b>${escapeHtml(dartsTxt)}</b> → total <b>${h.input}</b> ${tag}</div>
+        <div class="muted">Avant: ${h.before} → Après: ${h.after}</div>
+      `;
+      historyEl.appendChild(item);
+    });
+  }
+
+  // --- Cricket helpers ---
+  function markToGlyph(m){
+    if (m <= 0) return "";
+    if (m === 1) return "/";
+    if (m === 2) return "X";
+    return "◉";
+  }
+
+  function isTargetAllClosed(targetKey){
+    const marks = state.cricket.marks;
+    for (let i=0;i<marks.length;i++){
+      if ((marks[i][targetKey] || 0) < 3) return false;
+    }
+    return true;
+  }
+
+  function playerClosedTarget(playerIdx, targetKey){
+    return (state.cricket.marks[playerIdx][targetKey] || 0) >= 3;
+  }
+
+  function playerClosedAll(playerIdx){
+    const m = state.cricket.marks[playerIdx];
+    return CRICKET_TARGETS.every(t => (m[String(t)] || 0) >= 3);
+  }
+
+  function cricketApplyHit(playerIdx, hit){
+    const t = hit.targetKey;
+    if (!CRICKET_TARGETS.map(String).includes(t)) return {addedMarks:0, addedPoints:0};
+
+    const marks = state.cricket.marks;
+    const allClosed = isTargetAllClosed(t);
+    if (allClosed) return {addedMarks:0, addedPoints:0};
+
+    const before = marks[playerIdx][t] || 0;
+    const toAdd = hit.marksAdded;
+
+    let newMarks = before + toAdd;
+    let overflow = 0;
+    if (newMarks > 3){
+      overflow = newMarks - 3;
+      newMarks = 3;
+    }
+    marks[playerIdx][t] = newMarks;
+
+    let points = 0;
+    const after = marks[playerIdx][t];
+    const wasClosedBefore = before >= 3;
+    const isClosedNow = after >= 3;
+
+    if (wasClosedBefore){
+      points = toAdd * hit.pointsPerExtraMark;
+    } else if (isClosedNow && overflow > 0){
+      points = overflow * hit.pointsPerExtraMark;
+    }
+
+    if (points > 0){
+      state.players[playerIdx].score += points;
+    }
+
+    return {addedMarks: Math.min(toAdd, 3-before), addedPoints: points};
+  }
+
+  function cricketCheckWin(playerIdx){
+    if (!playerClosedAll(playerIdx)) return false;
+    const myScore = state.players[playerIdx].score;
+    const maxOther = Math.max(...state.players.map((p,i)=> i===playerIdx ? -Infinity : p.score));
+    return myScore >= maxOther;
+  }
+
+  function renderCricketBoard(){
+    if (state.mode !== "cricket"){
+      cricketBoardEl.style.display = "none";
+      return;
+    }
+
+    cricketBoardEl.style.display = "";
+    const n = state.players.length;
+
+    cHeaderRowEl.innerHTML = `
+      <div class="cHeaderLeft">Cible</div>
+      <div class="cHeaderRight" id="cHeaderRight"></div>
+    `;
+    const right = cHeaderRowEl.querySelector("#cHeaderRight");
+    right.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
+    state.players.forEach((p) => {
+      const c = document.createElement("div");
+      c.className = "cHeaderCell";
+      c.textContent = p.name;
+      c.title = p.name;
+      right.appendChild(c);
+    });
+
+    cGridEl.innerHTML = "";
+    CRICKET_TARGETS.forEach(target => {
+      const key = String(target);
+      const allClosed = isTargetAllClosed(key);
+      const currentIdx = state.current;
+      const currentClosed = playerClosedTarget(currentIdx, key);
+      const openForCurrent = currentClosed && !allClosed;
+
+      const row = document.createElement("div");
+      row.className = "cRow";
+
+      const targetLabel = (target === "B") ? "BULL" : String(target);
+      const tag = allClosed ? `<span class="openTag allclosed">ALL CLOSED</span>` :
+                  openForCurrent ? `<span class="openTag open">OPEN</span>` :
+                  `<span class="openTag">—</span>`;
+
+      const left = document.createElement("div");
+      left.className = "cTarget";
+      left.innerHTML = `<span>${targetLabel}</span>${tag}`;
+
+      const cells = document.createElement("div");
+      cells.className = "cCells";
+      cells.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
+
+      state.players.forEach((p, idx) => {
+        const m = state.cricket.marks[idx][key] || 0;
+        const cell = document.createElement("div");
+        cell.className = "cCell" + (idx===state.current ? " active" : "") + (m>=3 ? " closed" : "");
+        cell.innerHTML = `<span class="marks">${markToGlyph(Math.min(m,3))}</span>`;
+        cell.title = `${p.name} : ${m}/3`;
+        cells.appendChild(cell);
+      });
+
+      row.appendChild(left);
+      row.appendChild(cells);
+      cGridEl.appendChild(row);
+    });
+  }
+
+  function render(){
+    if (!state) return;
+
+    renderCricketBoard();
+    renderScoreboard();
+
+    const p = state.players[state.current];
+    turnLabelEl.textContent = state.finished ? "Partie terminée" : `🎯 ${p.name}, à toi de jouer !`;
+
+    renderHistory();
+
+    setMult(state.mult || 1);
+    updateConsole();
+
+    if (state.mode === "x01"){
+      rulesNoteEl.innerHTML = `X01 : si le total fait passer sous 0 → <b>bust</b>. Tu peux valider avec 1, 2 ou 3 fléchettes.`;
+    } else if (state.mode === "countup"){
+      rulesNoteEl.textContent = `Count Up : addition simple. Tu peux valider avec 1, 2 ou 3 fléchettes.`;
+    } else {
+      rulesNoteEl.innerHTML = `Cricket : 20→15 + Bull. Fermer à 3 marques. Tu scores si toi tu as fermé la cible et pas tout le monde.`;
+    }
+
+    saveState();
+  }
+
+  function applyTurn(){
+    if (!state || state.finished) return;
+
+    const idx = state.current;
+    const p = state.players[idx];
+
+    pushUndoSnapshot();
+
+    const before = p.score;
+    let after = before;
+    let kind = "ok";
+    const darts = (state.currentDarts||[]).map(d=>d.label);
+
+    if (state.mode === "x01"){
+      const val = getTotal();
+      after = before - val;
+      if (after < 0){
+        after = before;
+        kind = "bust";
+      } else {
+        p.score = after;
+        p.turns += 1;
+        if (after === 0){
+          kind = "win";
+          setFinished(idx);
+        }
+      }
+      state.history.unshift({ player:p.name, input: val, darts, before, after, kind, at: Date.now() });
+
+      state.currentDarts = [];
+      if (!state.finished){
+        if (!(kind==="bust")) nextPlayer();
+      }
+      render();
+      return;
+    }
+
+    if (state.mode === "countup"){
+      const val = getTotal();
+      after = before + val;
+      p.score = after;
+      p.turns += 1;
+
+      state.history.unshift({ player:p.name, input: val, darts, before, after, kind, at: Date.now() });
+
+      state.currentDarts = [];
+      nextPlayer();
+      render();
+      return;
+    }
+
+    // Cricket
+    let turnPointsGained = 0;
+
+    for (const d of (state.currentDarts||[])){
+      if (d.label === "MISS") continue;
+
+      if (d.label === "SB"){
+        const res = cricketApplyHit(idx, { targetKey: "B", marksAdded: 1, pointsPerExtraMark: BULL_POINTS_PER_MARK });
+        turnPointsGained += res.addedPoints;
+        continue;
+      }
+      if (d.label === "DB"){
+        const res = cricketApplyHit(idx, { targetKey: "B", marksAdded: 2, pointsPerExtraMark: BULL_POINTS_PER_MARK });
+        turnPointsGained += res.addedPoints;
+        continue;
+      }
+
+      if (d.meta && d.meta.type === "num"){
+        const n = d.meta.n;
+        const mult = d.meta.mult;
+        if (n < 15 || n > 20) continue;
+
+        const res = cricketApplyHit(idx, { targetKey: String(n), marksAdded: mult, pointsPerExtraMark: n });
+        turnPointsGained += res.addedPoints;
+      }
+    }
+
+    p.turns += 1;
+    after = p.score;
+
+    if (cricketCheckWin(idx)){
+      kind = "win";
+      setFinished(idx);
+    }
+
+    state.history.unshift({
+      player: p.name,
+      input: turnPointsGained,
+      darts,
+      before,
+      after,
+      kind,
+      at: Date.now()
+    });
+
+    state.currentDarts = [];
+    if (!state.finished) nextPlayer();
+
+    render();
+  }
+
+  function undo(){
+    if (!state || state.undoStack.length === 0) return;
+    const snap = state.undoStack.shift();
+    state.players = snap.players;
+    state.current = snap.current;
+    state.finished = snap.finished;
+    state.history = snap.history;
+    state.currentDarts = snap.currentDarts || [];
+    state.mult = snap.mult || 1;
+    state.cricket = snap.cricket;
+    render();
+  }
+
+  function resetGameKeepSetup(){
+    const mode = state.mode;
+    const startScore = state.startScore;
+
+    state.players = state.players.map(p => ({
+      name: p.name,
+      score: mode === "x01" ? startScore : 0,
+      turns: 0,
+      isWinner: false
+    }));
+
+    state.current = 0;
+    state.finished = false;
+    state.history = [];
+    state.undoStack = [];
+    state.currentDarts = [];
+    state.mult = 1;
+
+    if (mode === "cricket"){
+      state.cricket = { marks: createCricketMarks(state.players.length) };
+    } else {
+      delete state.cricket;
+    }
+
+    render();
+  }
+
+  function buildNumbers(){
+    numbersEl.innerHTML = "";
+    for (let n=1;n<=20;n++){
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "numBtn";
+      b.textContent = n;
+
+      if (state && state.mode === "cricket" && n < 15){
+        b.dataset.disabled = "1";
+        b.disabled = true;
+        b.style.opacity = ".35";
+      }
+
+      b.addEventListener("click", ()=>addNumber(n));
+      numbersEl.appendChild(b);
+    }
+  }
+
+  // Setup events
+  numPlayersEl.addEventListener("change", renderNameInputs);
+  modeEl.addEventListener("change", () => {
+    startScoreEl.disabled = (modeEl.value !== "x01");
+  });
+
+  startBtn.addEventListener("click", () => {
+    state = createGameFromSetup();
+    showGame();
+    buildNumbers();
+    render();
+  });
+
+  loadBtn.addEventListener("click", () => {
+    const loaded = loadState();
+    if (!loaded) { alert("Aucune partie sauvegardée trouvée."); return; }
+    state = loaded;
+
+    if (state.mode === "cricket" && (!state.cricket || !state.cricket.marks)){
+      state.cricket = { marks: createCricketMarks(state.players.length) };
+    }
+
+    showGame();
+    buildNumbers();
+    render();
+  });
+
+  // Game events
+  mS.addEventListener("click", ()=>setMult(1));
+  mD.addEventListener("click", ()=>setMult(2));
+  mT.addEventListener("click", ()=>setMult(3));
+
+  missBtn.addEventListener("click", ()=>addDart("MISS", 0, {type:"miss"}));
+  sbBtn.addEventListener("click", ()=>addDart("SB", 25, {type:"bull", marks:1}));
+  dbBtn.addEventListener("click", ()=>addDart("DB", 50, {type:"bull", marks:2}));
+
+  backBtn.addEventListener("click", backDart);
+  clearBtn.addEventListener("click", clearDarts);
+
+  applyBtn.addEventListener("click", applyTurn);
+  undoBtn.addEventListener("click", undo);
+
+  resetBtn.addEventListener("click", () => {
+    if (!confirm("Réinitialiser la partie ?")) return;
+    resetGameKeepSetup();
+  });
+
+  newGameBtn.addEventListener("click", () => {
+    if (!confirm("Revenir à l'écran de configuration ?")) return;
+    state = null;
+    showSetup();
+  });
+
+  // Keyboard shortcuts
+  window.addEventListener("keydown", (e) => {
+    if (!state || setupEl.style.display !== "none") return;
+    if (e.key === "Enter") { e.preventDefault(); if (!applyBtn.disabled) applyTurn(); }
+    if (e.key === "Backspace") { e.preventDefault(); backDart(); }
+    if (e.key === "Escape") { e.preventDefault(); clearDarts(); }
+  });
+
+  // init
+  renderNameInputs();
+  startScoreEl.disabled = (modeEl.value !== "x01");
+  showSetup();
+})();
+</script>
+
+<!-- ✅ Service Worker register (offline + install PWA) -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js");
+  }
+</script>
+
+</body>
+</html>
