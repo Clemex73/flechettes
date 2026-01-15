@@ -1227,6 +1227,7 @@ body{
       const undoBtn = $("undoBtn");
       const resetBtn = $("resetBtn");
       const newGameBtn = $("newGameBtn");
+      const reportBtn = $("reportBtn");
 
       // Dart console
       const dartsCountEl = $("dartsCount");
@@ -1531,6 +1532,199 @@ body{
           historyEl.appendChild(item);
         });
       }
+      function computeStats(){
+  const players = state.players.map(p => ({...p}));
+
+  const sorted = [...players].sort((a,b)=>{
+    if(state.mode==="x01") return a.score - b.score;   // 0 = meilleur
+    return b.score - a.score;                          // countup/cricket = max meilleur
+  });
+
+  const per = {};
+  players.forEach(p => per[p.name] = {
+    name:p.name, score:p.score, turns:p.turns||0,
+    total:0, busts:0, maxTurn:0, zeros:0
+  });
+
+  for(const h of (state.history||[])){
+    const s = per[h.player];
+    if(!s) continue;
+    s.total += (h.input||0);
+    s.maxTurn = Math.max(s.maxTurn, h.input||0);
+    if(h.kind==="bust") s.busts++;
+    if((h.input||0)===0) s.zeros++;
+  }
+
+  const bestShooter = Object.values(per).sort((a,b)=>b.maxTurn-a.maxTurn)[0];
+
+  // “le plus nul” : en X01 = plus de busts, sinon = plus faible total
+  const worst = (state.mode==="x01")
+    ? Object.values(per).sort((a,b)=>b.busts-a.busts)[0]
+    : Object.values(per).sort((a,b)=>a.total-b.total)[0];
+
+  return {sorted, per, bestShooter, worst};
+}
+
+// ✅ CLASH SAUVAGE (sur le jeu uniquement)
+function pickAnecdotesSavage(stats){
+  const perArr = Object.values(stats.per);
+  const totalBusts = perArr.reduce((s,p)=>s+p.busts,0);
+
+  const byMaxTurn = [...perArr].sort((a,b)=>b.maxTurn-a.maxTurn);
+  const byZeros   = [...perArr].sort((a,b)=>b.zeros-a.zeros);
+  const byBusts   = [...perArr].sort((a,b)=>b.busts-a.busts);
+
+  const best = byMaxTurn[0];
+  const missKing = byZeros[0];
+  const bustKing = byBusts[0];
+
+  const winner = state.players.find(p=>p.isWinner)?.name || stats.sorted[0]?.name || "—";
+  const loser = stats.sorted[stats.sorted.length-1]?.name || "—";
+
+  const pool = [];
+
+  // Best shooter roasts everyone else
+  if(best && best.maxTurn>0){
+    pool.push(`🏹 ${best.name} a collé ${best.maxTurn} points sur un tour. Les autres ont vu ça comme un documentaire.`);
+    pool.push(`🔥 Tour à ${best.maxTurn} par ${best.name}. On n’est plus sur une partie, on est sur une démonstration.`);
+  } else {
+    pool.push(`😬 Aucun tour “monstrueux”. Le board n’a pas souffert aujourd’hui, juste déçu.`);
+  }
+
+  // Bust savage
+  if(state.mode==="x01"){
+    if(bustKing && bustKing.busts>0){
+      pool.push(`🧨 ${bustKing.name} : ${bustKing.busts} bust. Même la calculatrice a demandé une pause.`);
+      pool.push(`🧱 ${bustKing.name} a tapé le mur ${bustKing.busts} fois. Le mur gagne par KO.`);
+    } else {
+      pool.push(`😇 Zéro bust. Calme. Trop calme. Suspicious.`);
+    }
+  }
+
+  // Miss savage
+  if(missKing && missKing.zeros>=2){
+    pool.push(`🎯 ${missKing.name} a offert ${missKing.zeros} tour(s) à 0. Sponsor officiel du “rien du tout”.`);
+    pool.push(`🫥 ${missKing.name} et la cible : relation à distance. Très distance.`);
+  }
+
+  // Winner / loser banter
+  if(winner!=="—"){
+    pool.push(`👑 ${winner} gagne. Les autres ? Merci d’avoir participé au spectacle.`);
+    pool.push(`🥇 ${winner} a mis tout le monde d’accord… ou au moins fatigué.`);
+  }
+  if(loser!=="—" && loser!==winner){
+    pool.push(`🥄 ${loser} finit dernier. Ce n’est pas une défaite, c’est une expérience pédagogique.`);
+    pool.push(`📉 ${loser} a testé une stratégie innovante : ne pas scorer pour garder le suspense.`);
+  }
+
+  // Global vibe
+  if(totalBusts>=4) pool.push(`🔥 Ambiance : ${totalBusts} bust. Le board a demandé un arrêt maladie.`);
+  if(totalBusts===0 && (missKing?.zeros||0)===0) pool.push(`🎩 Partie propre. Presque trop propre. On dirait un entraînement de pros.`);
+
+  // Pick 6 max, random but stable-ish
+  const out = [];
+  while(out.length < 6 && pool.length){
+    const i = Math.floor(Math.random()*pool.length);
+    out.push(pool.splice(i,1)[0]);
+  }
+  return out;
+}
+
+function generateReportHTML(){
+  const stats = computeStats();
+  const date = new Date().toLocaleString("fr-FR");
+  const winner = state.players.find(p=>p.isWinner)?.name || stats.sorted[0]?.name || "—";
+  const anecdotes = pickAnecdotesSavage(stats);
+
+  const rows = stats.sorted.map((p,i)=>{
+    const medal = i===0 ? "🥇" : i===1 ? "🥈" : i===2 ? "🥉" : "•";
+    return `<tr>
+      <td style="width:34px">${medal}</td>
+      <td><b>${escapeHtml(p.name)}</b></td>
+      <td style="text-align:right"><b>${p.score}</b></td>
+      <td style="text-align:right">${p.turns||0}</td>
+    </tr>`;
+  }).join("");
+
+  const cards = Object.values(stats.per).map(p=>{
+    return `<div class="card">
+      <div class="name">${escapeHtml(p.name)}</div>
+      <div class="kpi"><span>Score</span><b>${p.score}</b></div>
+      <div class="kpi"><span>Meilleur tour</span><b>${p.maxTurn}</b></div>
+      <div class="kpi"><span>Bust</span><b>${p.busts}</b></div>
+      <div class="kpi"><span>Tours à 0</span><b>${p.zeros}</b></div>
+    </div>`;
+  }).join("");
+
+  const ane = anecdotes.map(a=>`<li>${escapeHtml(a)}</li>`).join("");
+
+  return `<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<title>Résumé A4</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  body{ font-family: -apple-system,system-ui,Segoe UI,Roboto,Arial; color:#171513; }
+  .header{ display:flex; justify-content:space-between; gap:12px; padding:10px 12px;
+    border:1px solid rgba(23,21,19,.12); border-radius:14px; background:#F6EFE4; }
+  .title{ font-size:18px; font-weight:900; }
+  .meta{ font-size:12px; color:rgba(23,21,19,.65); }
+  .badge{ display:inline-block; padding:6px 10px; border-radius:999px;
+    background: rgba(196,43,43,.12); border:1px solid rgba(196,43,43,.22);
+    font-weight:800; font-size:12px; }
+  .grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap:12px; margin-top:12px; }
+  .box{ border:1px solid rgba(23,21,19,.12); border-radius:14px; padding:10px 12px; background:#fff; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  td{ padding:6px 4px; border-bottom:1px solid rgba(23,21,19,.08); }
+  tr:last-child td{ border-bottom:none; }
+  .cards{ display:grid; grid-template-columns: repeat(2,1fr); gap:10px; margin-top:10px; }
+  .card{ border:1px solid rgba(23,21,19,.10); border-radius:12px; padding:10px; background:#fff; }
+  .name{ font-weight:900; margin-bottom:6px; }
+  .kpi{ display:flex; justify-content:space-between; font-size:12px; color:rgba(23,21,19,.72); }
+  .kpi b{ color:#171513; }
+  .ane li{ margin:6px 0; font-size:13px; }
+  .footer{ margin-top:10px; font-size:11px; color:rgba(23,21,19,.55); }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="title">Résumé de partie – Fléchettes</div>
+      <div class="meta">${escapeHtml(fmtMode(state.mode))} • ${escapeHtml(date)}</div>
+    </div>
+    <div class="badge">Gagnant : ${escapeHtml(winner)}</div>
+  </div>
+
+  <div class="grid">
+    <div class="box">
+      <h3 style="margin:0 0 8px;font-size:14px">Classement</h3>
+      <table>${rows}</table>
+    </div>
+    <div class="box">
+      <h3 style="margin:0 0 8px;font-size:14px">Exploits & anecdotes (mode clash)</h3>
+      <ul class="ane" style="margin:0;padding-left:16px">${ane}</ul>
+    </div>
+  </div>
+
+  <div class="box" style="margin-top:12px">
+    <h3 style="margin:0 0 8px;font-size:14px">Stats par joueur</h3>
+    <div class="cards">${cards}</div>
+  </div>
+
+  <div class="footer">Généré par l’appli (Imprimer → “Enregistrer en PDF”).</div>
+
+  <script>window.onload=()=>window.print();</script>
+</body>
+</html>`;
+}
+
+function downloadReport(){
+  const w = window.open("", "_blank");
+  w.document.open();
+  w.document.write(generateReportHTML());
+  w.document.close();
+}
 
       // --- Cricket helpers ---
       function markToGlyph(m){
@@ -1749,6 +1943,7 @@ body{
         renderHistory();
         setMult(state.mult || 1);
         updateConsole();
+        reportBtn.style.display = state.finished ? "" : "none";
 
         if (state.mode === "x01"){
           rulesNoteEl.innerHTML = `X01 : si le total fait passer sous 0 → <b>bust</b>.`;
@@ -1949,6 +2144,8 @@ body{
         showSetup();
       });
 
+      reportBtn.addEventListener("click", downloadReport);
+
       // Mobile tabs
       tabInput.addEventListener("click", ()=>setMobileView("input"));
       tabCricket.addEventListener("click", ()=>setMobileView("cricket"));
@@ -1992,6 +2189,7 @@ body{
   </script>
 </body>
 </html>
+
 
 
 
