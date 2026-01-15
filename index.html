@@ -704,11 +704,7 @@
       }
 
       /* Turn banner compact */
-      .turnBanner{
-        margin-top: 8px;
-        padding: 10px 10px;
-      }
-      .kbd{ display:none; }
+      .turnBanner{ display:none !important; }
 
       /* Tabs – nicer segmented control */
       .tabs{
@@ -788,13 +784,15 @@
 
       /* Keypad takes remaining height */
       .numbers{
-        margin-top: 8px;
+        margin-top: 6px;
         flex: 1;
         min-height: 0;
         display:grid;
         grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 8px;
-        overflow:hidden;
+      
+        /* ✅ clé: hauteur stable des touches */
+        grid-auto-rows: 1fr;
       }
       .numbers .numBtn{
         padding: 0;
@@ -811,21 +809,23 @@
       /* Cricket + history panels: no scroll */
       .history{ height: 100%; overflow:hidden; max-height: none; }
       .cricketLegend{ display:none; }
-      .cRow{ grid-template-columns: 70px 1fr; }
-      .cTarget{ padding: 8px 8px; font-size: 12px; }
-      .cCell{ padding: 8px 6px; }
-      .cHeaderLeft{ padding: 8px 8px; font-size: 11px; }
-      .cHeaderCell{ padding: 8px 6px; font-size: 11px; }
+      .cricketTitle{ display:none !important; }     /* enlève “Cible Cricket” */
+      .cHeaderRow{ margin-top: 6px !important; }
+      .cricketGrid{ margin-top: 6px !important; }
+      .cRow{ grid-template-columns: 60px 1fr; }
+      .cTarget{ padding: 6px 6px; font-size: 11px; }
+      .cCell{ padding: 6px 4px; }
+      .cHeaderLeft{ padding: 6px 6px; font-size: 10px; }
+      .cHeaderCell{ padding: 6px 4px; font-size: 10px; }
+      .cCell .marks{ font-size: 13px !important; letter-spacing: .5px !important; }
 
       /* Mobile-only visible */
       .mobilePlayers, .tabs, .mobilePanels { display:flex; }
-    .turnBanner{ display:none !important; }
-      .mpCard{ min-width: 96px !important; }
-  .mpScore{ font-size: 16px !important; }
+      
   /* 1) On récupère de la hauteur partout */
-  header{ margin: 2px 0 6px !important; }
-  header h1{ font-size: 14px !important; }
-  .badge{ padding: 5px 9px !important; font-size: 10px !important; }
+  .topbar{ margin: -10px -10px 6px !important; padding: 8px 10px 6px !important; }
+  .brand h1{ font-size: 14px !important; }
+  .pill{ padding: 6px 10px !important; font-size: 11px !important; }
 
   /* Carte globale un peu moins “grosse” */
   .card{ padding: 10px !important; border-radius: 18px !important; }
@@ -1908,4 +1908,5 @@
   </script>
 </body>
 </html>
+
 
