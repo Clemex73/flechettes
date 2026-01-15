@@ -14,347 +14,596 @@
   <link rel="icon" type="image/png" href="icon-192.png">
 
   <style>
-    :root{
-      --bg:#070b14;
-      --border:rgba(255,255,255,.10);
-      --text:#e9eefc;
-      --muted:rgba(233,238,252,.70);
-      --muted2:rgba(233,238,252,.50);
-      --accent:#2b65ff;
-      --danger:#ff3b3b;
-      --ok:#8dff9c;
-      --warn:#ffb36a;
-      --radius:18px;
-      --shadow: 0 12px 40px rgba(0,0,0,.45);
-    }
-    *{box-sizing:border-box}
-    html, body{ height: 100%; }
-    body{
-      margin:0;
-      background: radial-gradient(1200px 800px at 20% 0%, rgba(43,101,255,.25), transparent 55%),
-                  radial-gradient(900px 600px at 90% 20%, rgba(141,255,156,.14), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-    }
+/* =========================
+   CLEMEX — THEME (logo match)
+   Beige / crème + noir + rouge savoyard
+   ========================= */
 
-    .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
-    header{
-      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
-      margin: 6px 0 14px;
-    }
-    header h1{ margin:0; font-size: 18px; letter-spacing:.2px; }
-    .badge{
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 8px 12px; border-radius: 999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.05);
-      box-shadow: var(--shadow);
-      font-size: 12px; color: var(--muted);
-    }
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: var(--shadow);
-    }
-    .row{display:flex; gap:12px; flex-wrap:wrap;}
-    .col{flex: 1 1 300px;}
-    label{display:block; font-size: 12px; color: var(--muted); margin: 10px 0 6px;}
-    select,input,button{
-      width:100%;
-      padding: 11px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(7,11,20,.55);
-      color: var(--text);
-      outline:none;
-    }
-    button{
-      cursor:pointer;
-      font-weight: 800;
-      border-color: transparent;
-      background: linear-gradient(180deg, rgba(43,101,255,1), rgba(43,101,255,.78));
-      box-shadow: 0 10px 28px rgba(43,101,255,.25);
-      transition: transform .06s ease, filter .15s ease;
-    }
-    button:hover{ filter: brightness(1.06); }
-    button:active{ transform: translateY(1px); }
-    button.secondary{
-      background: rgba(255,255,255,.06);
-      border-color: rgba(255,255,255,.14);
-      box-shadow: none;
-      font-weight: 750;
-    }
-    button.danger{
-      background: linear-gradient(180deg, rgba(255,59,59,1), rgba(255,59,59,.76));
-      box-shadow: 0 10px 28px rgba(255,59,59,.20);
-    }
-    button:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
-    .muted{ color: var(--muted2); font-size: 12px; }
-    .hr{ height:1px; background: rgba(255,255,255,.10); margin: 12px 0; }
+:root{
+  /* Fond crème premium */
+  --bg: #F2E9DC;             /* crème chaud */
+  --bg2:#EDE2D2;             /* variante */
+  --paper:#F7F0E6;           /* cartes ivoire */
+  --paper2:#F3EBDD;          /* légère profondeur */
 
-    /* --- Desktop scoreboard (grid) --- */
-    .scoreboard{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-      margin-top: 12px;
-    }
-    .player{
-      border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding: 12px;
-      position: relative;
-      overflow:hidden;
-    }
-    .player.active{
-      background: rgba(43,101,255,.16);
-      border-color: rgba(43,101,255,.45);
-      outline: 2px solid rgba(43,101,255,.35);
-    }
-    .player.active::before{
-      content:"";
-      position:absolute; inset:0;
-      background: radial-gradient(600px 220px at 20% 0%, rgba(43,101,255,.35), transparent 55%);
-      pointer-events:none;
-    }
-    .phead{display:flex; align-items:center; justify-content:space-between; gap:10px;}
-    .phead b{font-size: 14px}
-    .status{font-size:12px; color: var(--muted);}
-    .big{ font-size: 38px; font-weight: 900; margin: 10px 0 2px; letter-spacing:.3px; }
-    .small{ font-size: 12px; color: var(--muted2); }
-    .win{ color: var(--ok); font-weight: 900; }
-    .bust{ color: var(--warn); font-weight: 900; }
+  /* Encre / texte */
+  --ink:#171513;             /* noir doux */
+  --ink2:#2B2724;            /* noir/gris */
+  --muted: rgba(23,21,19,.68);
+  --muted2: rgba(23,21,19,.52);
 
-    .turnBanner{
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    }
-    .turnBanner b{font-size: 14px}
-    .kbd{ font-size: 11px; color: var(--muted); display:flex; gap:8px; flex-wrap:wrap; }
-    .kbd span{ padding: 4px 8px; border-radius: 999px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); }
+  /* Lignes / borders */
+  --border: rgba(23,21,19,.10);
+  --border2: rgba(23,21,19,.14);
 
-    /* --- Console --- */
-    .console{
-      border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      padding: 12px;
-    }
-    .readout{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-      margin-top: 8px;
-    }
-    .chips{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-    .chip{
-      padding: 7px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .chip b{ color: var(--text); font-weight: 900; }
+  /* Accent rouge savoyard */
+  --accent:#C42B2B;          /* rouge principal */
+  --accent2:#E05151;         /* hover */
+  --accentSoft: rgba(196,43,43,.14);
 
-    .dartsRow{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .dartSlot{
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      padding: 12px;
-      min-height: 68px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .dartSlot .label{ font-size: 14px; font-weight: 900; }
-    .dartSlot .pts{ font-size: 18px; font-weight: 900; }
-    .dartSlot.empty{ opacity:.55; }
+  /* Etats */
+  --danger:#C42B2B;          /* on reste cohérent */
+  --ok:#1D7A4A;              /* vert discret */
+  --warn:#B36A2E;            /* ocre chaud */
 
-    .totalBox{
-      border-radius: 16px;
-      border:1px solid rgba(43,101,255,.35);
-      background: rgba(43,101,255,.14);
-      padding: 12px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-top: 10px;
-    }
-    .totalBox b{font-size: 14px}
-    .totalBox .total{ font-size: 28px; font-weight: 950; }
+  /* Layout */
+  --radius: 18px;
+  --radius2: 14px;
 
-    .selector{
-      margin-top: 12px;
-      display:flex; gap:10px; flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .toggles{
-      display:flex; gap:8px;
-      background: rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 999px;
-      padding: 6px;
-    }
-    .toggles button{
-      width:auto;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: transparent;
-      border:1px solid transparent;
-      box-shadow:none;
-      font-weight: 900;
-      color: var(--muted);
-    }
-    .toggles button.active{
-      background: rgba(43,101,255,.20);
-      border-color: rgba(43,101,255,.35);
-      color: var(--text);
-    }
-    .quickRow{
-      display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px;
-    }
-    .miniBtn{
-      width:auto;
-      padding: 9px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow:none;
-      font-weight: 900;
-    }
-    .numbers{
-      margin-top: 10px;
-      display:grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 8px;
-    }
-    .numBtn{
-      padding: 12px 0;
-      border-radius: 16px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow:none;
-      font-size: 15px;
-      font-weight: 950;
-    }
+  /* Ombres “papier” (plus naturelles que néon) */
+  --shadow: 0 14px 40px rgba(23,21,19,.12);
+  --shadow2: 0 8px 20px rgba(23,21,19,.10);
 
-    .actionsRow{
-      display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px;
-    }
-    .actionsRow > *{ flex: 1 1 160px; }
+  /* Typo */
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
 
-    /* Desktop layout grid */
-    .grid2{ display:grid; grid-template-columns: 1.12fr .88fr; gap: 12px; }
-    @media (max-width: 860px){ .grid2{ grid-template-columns: 1fr; } }
+*{box-sizing:border-box}
+html, body{ height: 100%; }
 
-    /* History */
-    .history{ max-height: 360px; overflow:auto; border-radius: var(--radius); border:1px solid rgba(255,255,255,.10); }
-    .hist-item{ padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08); font-size: 13px; }
-    .hist-item:last-child{ border-bottom:none; }
+body{
+  margin:0;
+  font-family: var(--font);
+  color: var(--ink);
 
-    /* Cricket board */
-    .cricketWrap{ margin-top: 12px; }
-    .cricketTitle{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
-    .cricketLegend{ display:flex; gap:8px; flex-wrap:wrap; }
-    .cricketLegend .chip{ font-size: 11px; }
-    .cricketGrid{
-      margin-top: 10px;
-      border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.10);
-      overflow:hidden;
-    }
-    .cRow{
-      display:grid;
-      grid-template-columns: 90px 1fr;
-      gap: 0;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-    }
-    .cRow:last-child{ border-bottom:none; }
-    .cTarget{
-      padding: 10px 12px;
-      font-weight: 950;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      border-right:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-    }
-    .cCells{ display:grid; gap: 0; }
-    .cCell{
-      padding: 10px 10px;
-      border-right:1px solid rgba(255,255,255,.08);
-      display:flex; align-items:center; justify-content:center;
-      font-weight: 900;
-      color: var(--muted);
-    }
-    .cCell:last-child{ border-right:none; }
-    .cCell.active{ background: rgba(43,101,255,.12); color: var(--text); }
-    .cCell.closed{ color: var(--ok); }
-    .cCell .marks{ letter-spacing: 1px; font-size: 14px; }
-    .cTarget .openTag{
-      font-size: 10px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: var(--muted);
-      font-weight: 900;
-    }
-    .cTarget .openTag.allclosed{
-      border-color: rgba(141,255,156,.35);
-      background: rgba(141,255,156,.10);
-      color: var(--ok);
-    }
-    .cTarget .openTag.open{
-      border-color: rgba(43,101,255,.35);
-      background: rgba(43,101,255,.12);
-      color: var(--text);
-    }
-    .cHeaderRow{
-      display:grid;
-      grid-template-columns: 90px 1fr;
-      border-radius: var(--radius);
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      margin-top: 10px;
-    }
-    .cHeaderLeft{
-      padding: 10px 12px;
-      font-size: 12px;
-      color: var(--muted);
-      border-right:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      font-weight: 900;
-    }
-    .cHeaderRight{ display:grid; background: rgba(255,255,255,.03); }
-    .cHeaderCell{
-      padding: 10px 10px;
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 900;
-      text-align:center;
-      border-right:1px solid rgba(255,255,255,.08);
-      white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
-    }
-    .cHeaderCell:last-child{ border-right:none; }
+  /* Fond crème doux + “vignette” discrète */
+  background:
+    radial-gradient(900px 600px at 18% 0%, rgba(196,43,43,.10), transparent 60%),
+    radial-gradient(900px 700px at 90% 15%, rgba(23,21,19,.06), transparent 55%),
+    linear-gradient(180deg, var(--bg), var(--bg2));
 
-    /* =========================
-       MOBILE: NO VERTICAL SCROLL
-       ========================= */
-    @media (max-width: 640px){
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
 
-  /* 1) Pas de scroll, vraie hauteur iOS */
+.wrap{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+/* =========================
+   Header / badges
+   ========================= */
+
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin: 6px 0 14px;
+}
+
+header h1{
+  margin:0;
+  font-size: 18px;
+  letter-spacing:.2px;
+  color: var(--ink);
+}
+
+/* Petit “chip” premium (comme un label imprimé) */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border:1px solid var(--border);
+  background: rgba(247,240,230,.70);
+  box-shadow: var(--shadow2);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* =========================
+   Cards / separators
+   ========================= */
+
+.card{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.25));
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
+}
+
+.hr{
+  height:1px;
+  background: var(--border);
+  margin: 12px 0;
+}
+
+.row{display:flex; gap:12px; flex-wrap:wrap;}
+.col{flex: 1 1 300px;}
+
+label{
+  display:block;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 10px 0 6px;
+}
+
+.muted{ color: var(--muted2); font-size: 12px; }
+
+/* =========================
+   Inputs
+   ========================= */
+
+select,input,button{
+  width:100%;
+  padding: 11px 12px;
+  border-radius: var(--radius2);
+  border: 1px solid var(--border2);
+  background: rgba(247,240,230,.85);
+  color: var(--ink);
+  outline:none;
+}
+
+/* Focus visible (rouge très discret) */
+select:focus, input:focus{
+  box-shadow: 0 0 0 4px rgba(196,43,43,.14);
+  border-color: rgba(196,43,43,.35);
+}
+
+/* =========================
+   Buttons
+   ========================= */
+
+button{
+  cursor:pointer;
+  font-weight: 900;
+  border-color: transparent;
+
+  /* Rouge savoyard “encre” */
+  background: linear-gradient(180deg, var(--accent), #A91F1F);
+  color: #fff;
+  box-shadow: 0 12px 26px rgba(196,43,43,.18);
+  transition: transform .06s ease, filter .15s ease, box-shadow .15s ease;
+}
+button:hover{
+  filter: brightness(1.04);
+  box-shadow: 0 14px 30px rgba(196,43,43,.22);
+}
+button:active{ transform: translateY(1px); }
+
+/* Boutons secondaires : “papier + encre” */
+button.secondary{
+  background: rgba(247,240,230,.85);
+  border-color: var(--border2);
+  box-shadow: none;
+  font-weight: 850;
+  color: var(--ink);
+}
+button.secondary:hover{
+  box-shadow: 0 10px 20px rgba(23,21,19,.10);
+}
+
+/* Danger (reste rouge mais plus “alerte”) */
+button.danger{
+  background: linear-gradient(180deg, #C42B2B, #941A1A);
+  box-shadow: 0 12px 26px rgba(196,43,43,.20);
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
+}
+
+/* =========================
+   Scoreboard (desktop)
+   ========================= */
+
+.scoreboard{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.player{
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(247,240,230,.65);
+  padding: 12px;
+  position: relative;
+  overflow:hidden;
+  box-shadow: var(--shadow2);
+}
+
+.player.active{
+  border-color: rgba(196,43,43,.35);
+  outline: 2px solid rgba(196,43,43,.20);
+  background: linear-gradient(180deg, rgba(196,43,43,.10), rgba(247,240,230,.70));
+}
+
+.player.active::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: radial-gradient(600px 220px at 20% 0%, rgba(196,43,43,.16), transparent 55%);
+  pointer-events:none;
+}
+
+.phead{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.phead b{font-size: 14px}
+.status{font-size:12px; color: var(--muted);}
+
+.big{
+  font-size: 38px;
+  font-weight: 950;
+  margin: 10px 0 2px;
+  letter-spacing:.3px;
+  color: var(--ink);
+}
+
+.small{ font-size: 12px; color: var(--muted2); }
+.win{ color: var(--ok); font-weight: 950; }
+.bust{ color: var(--warn); font-weight: 950; }
+
+/* =========================
+   Turn banner
+   ========================= */
+
+.turnBanner{
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(247,240,230,.70);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  box-shadow: var(--shadow2);
+}
+
+.turnBanner b{font-size: 14px}
+.kbd{
+  font-size: 11px;
+  color: var(--muted);
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.kbd span{
+  padding: 4px 8px;
+  border-radius: 999px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.45);
+}
+
+/* =========================
+   Console
+   ========================= */
+
+.console{
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(247,240,230,.55);
+  padding: 12px;
+  box-shadow: var(--shadow2);
+}
+
+.readout{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  margin-top: 8px;
+}
+
+.chips{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+
+.chip{
+  padding: 7px 10px;
+  border-radius: 999px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.45);
+  font-size: 12px;
+  color: var(--muted);
+}
+.chip b{ color: var(--ink); font-weight: 950; }
+
+.dartsRow{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.dartSlot{
+  border-radius: 16px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.45);
+  padding: 12px;
+  min-height: 68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.dartSlot .label{ font-size: 14px; font-weight: 950; }
+.dartSlot .pts{ font-size: 18px; font-weight: 950; }
+.dartSlot.empty{ opacity:.55; }
+
+.totalBox{
+  border-radius: 16px;
+  border:1px solid rgba(196,43,43,.28);
+  background: rgba(196,43,43,.10);
+  padding: 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top: 10px;
+}
+.totalBox b{font-size: 14px}
+.totalBox .total{
+  font-size: 28px;
+  font-weight: 980;
+  color: var(--ink);
+}
+
+.selector{
+  margin-top: 12px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+}
+
+/* Multiplicateurs : segment control “Apple-like” crème */
+.toggles{
+  display:flex;
+  gap:8px;
+  background: rgba(255,255,255,.45);
+  border:1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px;
+}
+
+.toggles button{
+  width:auto;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: transparent;
+  border:1px solid transparent;
+  box-shadow:none;
+  font-weight: 950;
+  color: var(--muted);
+}
+
+.toggles button.active{
+  background: rgba(196,43,43,.14);
+  border-color: rgba(196,43,43,.22);
+  color: var(--ink);
+}
+
+/* Boutons rapides */
+.quickRow{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top: 10px;
+}
+
+.miniBtn{
+  width:auto;
+  padding: 9px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.45);
+  border:1px solid var(--border);
+  box-shadow:none;
+  font-weight: 950;
+  color: var(--ink);
+}
+.miniBtn:hover{ box-shadow: 0 10px 18px rgba(23,21,19,.10); }
+
+/* Clavier numbers */
+.numbers{
+  margin-top: 10px;
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.numBtn{
+  padding: 12px 0;
+  border-radius: 16px;
+  background: rgba(255,255,255,.45);
+  border:1px solid var(--border);
+  box-shadow:none;
+  font-size: 15px;
+  font-weight: 980;
+  color: var(--ink);
+}
+.numBtn:hover{ box-shadow: 0 10px 18px rgba(23,21,19,.10); }
+
+.actionsRow{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top: 12px;
+}
+.actionsRow > *{ flex: 1 1 160px; }
+
+/* Desktop layout */
+.grid2{
+  display:grid;
+  grid-template-columns: 1.12fr .88fr;
+  gap: 12px;
+}
+@media (max-width: 860px){
+  .grid2{ grid-template-columns: 1fr; }
+}
+
+/* History */
+.history{
+  max-height: 360px;
+  overflow:auto;
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.35);
+}
+.hist-item{
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  font-size: 13px;
+}
+.hist-item:last-child{ border-bottom:none; }
+
+/* =========================
+   Cricket board
+   ========================= */
+
+.cricketWrap{ margin-top: 12px; }
+.cricketTitle{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.cricketLegend{ display:flex; gap:8px; flex-wrap:wrap; }
+.cricketLegend .chip{ font-size: 11px; }
+
+.cricketGrid{
+  margin-top: 10px;
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  overflow:hidden;
+  background: rgba(255,255,255,.35);
+}
+
+.cRow{
+  display:grid;
+  grid-template-columns: 90px 1fr;
+  gap: 0;
+  border-bottom:1px solid var(--border);
+  background: rgba(255,255,255,.20);
+}
+.cRow:last-child{ border-bottom:none; }
+
+.cTarget{
+  padding: 10px 12px;
+  font-weight: 980;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border-right:1px solid var(--border);
+  background: rgba(255,255,255,.35);
+}
+
+.cCells{ display:grid; gap: 0; }
+.cCell{
+  padding: 10px 10px;
+  border-right:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 950;
+  color: var(--muted);
+}
+.cCell:last-child{ border-right:none; }
+
+.cCell.active{
+  background: rgba(196,43,43,.10);
+  color: var(--ink);
+}
+.cCell.closed{ color: var(--ok); }
+
+.cCell .marks{ letter-spacing: 1px; font-size: 14px; }
+
+.cTarget .openTag{
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.45);
+  color: var(--muted);
+  font-weight: 950;
+}
+.cTarget .openTag.allclosed{
+  border-color: rgba(29,122,74,.25);
+  background: rgba(29,122,74,.10);
+  color: var(--ok);
+}
+.cTarget .openTag.open{
+  border-color: rgba(196,43,43,.25);
+  background: rgba(196,43,43,.12);
+  color: var(--ink);
+}
+
+.cHeaderRow{
+  display:grid;
+  grid-template-columns: 90px 1fr;
+  border-radius: var(--radius);
+  overflow:hidden;
+  border:1px solid var(--border);
+  margin-top: 10px;
+  background: rgba(255,255,255,.25);
+}
+
+.cHeaderLeft{
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  border-right:1px solid var(--border);
+  background: rgba(255,255,255,.35);
+  font-weight: 950;
+}
+
+.cHeaderRight{ display:grid; background: rgba(255,255,255,.20); }
+
+.cHeaderCell{
+  padding: 10px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 950;
+  text-align:center;
+  border-right:1px solid var(--border);
+  white-space: nowrap;
+  overflow:hidden;
+  text-overflow: ellipsis;
+}
+.cHeaderCell:last-child{ border-right:none; }
+
+/* =========================
+   Mobile: ton layout no-scroll conservé
+   (on remplace juste les couleurs / fonds)
+   ========================= */
+
+@media (max-width: 640px){
   html, body { height: 100%; }
   body{
     overflow: hidden;
@@ -362,6 +611,7 @@
     padding-top: 0;
     padding-bottom: 0;
   }
+
   .wrap{
     max-width: 100%;
     height: 100dvh;
@@ -370,12 +620,11 @@
     flex-direction: column;
   }
 
-  /* 2) Header + top badge ultra compact */
   header{ margin: 4px 0 8px; }
   header h1{ font-size: 15px; }
+
   .badge{ padding: 6px 10px; font-size: 11px; }
 
-  /* 3) Game = colonne fixe, sans débordement */
   #game{
     margin-top: 10px !important;
     flex: 1;
@@ -386,44 +635,63 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* 4) On cache la grille desktop */
   .grid2{ display:none !important; }
   .scoreboard{ display:none !important; }
 
-  /* 5) Bandeau joueurs en haut (1 ligne scroll horizontal OK) */
   .mobilePlayers{
     display:flex;
     gap:8px;
-    overflow-x:auto;            /* ✅ horizontal autorisé, pas vertical */
+    overflow-x:auto;
     overflow-y:hidden;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 6px;
     margin-top: 8px;
   }
-  .mpCard{ min-width: 112px; padding: 7px 9px; border-radius: 14px; }
-  .mpTop{ font-size: 10px; }
-  .mpName{ font-size: 12px; max-width: 84px; }
-  .mpScore{ font-size: 16px; margin-top: 3px; }
 
-  /* 6) Tour banner compact */
+  .mpCard{
+    min-width: 112px;
+    padding: 7px 9px;
+    border-radius: 14px;
+    border:1px solid var(--border);
+    background: rgba(255,255,255,.45);
+    box-shadow: var(--shadow2);
+  }
+  .mpCard.active{
+    border-color: rgba(196,43,43,.30);
+    background: rgba(196,43,43,.10);
+  }
+  .mpTop{ font-size: 10px; color: var(--muted); display:flex; justify-content:space-between; gap:8px; }
+  .mpName{ font-size: 12px; max-width: 84px; color: var(--ink); font-weight: 950; }
+  .mpScore{ font-size: 16px; margin-top: 3px; font-weight: 980; color: var(--ink); }
+
   .turnBanner{ margin-top: 6px; padding: 8px 10px; }
   .turnBanner b{ font-size: 13px; }
   .kbd{ display:none; }
 
-  /* 7) Tabs visibles */
   .tabs{
     display:flex;
     gap:6px;
     margin-top: 6px;
     padding: 5px;
     border-radius: 999px;
+    border:1px solid var(--border);
+    background: rgba(255,255,255,.35);
   }
+
   .tabs button{
     padding: 8px 8px;
     font-size: 12px;
+    background: transparent;
+    border:1px solid transparent;
+    color: var(--muted);
+    box-shadow:none;
+  }
+  .tabs button.active{
+    background: rgba(196,43,43,.12);
+    border-color: rgba(196,43,43,.18);
+    color: var(--ink);
   }
 
-  /* 8) Panels = plein espace restant, aucun scroll vertical */
   .mobilePanels{
     display:flex;
     flex-direction: column;
@@ -432,15 +700,10 @@
     overflow:hidden;
     margin-top: 6px;
   }
-  .panel{
-    display:none;
-    flex: 1;
-    min-height: 0;
-    overflow:hidden;  /* ✅ NO SCROLL */
-  }
+
+  .panel{ display:none; flex: 1; min-height: 0; overflow:hidden; }
   .panel.active{ display:block; }
 
-  /* 9) Console devient un layout "qui rentre" */
   .console{
     padding: 8px;
     height: 100%;
@@ -450,73 +713,48 @@
     overflow:hidden;
   }
 
-  /* 10) Ligne du haut (chips + boutons) compressée */
   .readout{ margin-top: 0; gap:6px; }
   .chip{ padding: 5px 8px; font-size: 10px; }
   .chips button{ padding: 8px 10px; font-size: 12px; }
 
-  /* 11) DartsRow + Total super petits */
-  .dartsRow{
-    margin-top: 6px;
-    gap:6px;
-  }
-  .dartSlot{
-    min-height: 46px;
-    padding: 8px;
-    border-radius: 14px;
-  }
+  .dartsRow{ margin-top: 6px; gap:6px; }
+  .dartSlot{ min-height: 46px; padding: 8px; border-radius: 14px; }
   .dartSlot .label{ font-size: 11px; }
   .dartSlot .pts{ font-size: 13px; }
 
-  .totalBox{
-    margin-top: 6px;
-    padding: 8px 10px;
-    border-radius: 14px;
-  }
+  .totalBox{ margin-top: 6px; padding: 8px 10px; border-radius: 14px; }
   .totalBox b{ font-size: 12px; }
   .totalBox .total{ font-size: 20px; }
 
-  /* 12) Multiplicateurs + hint très compacts */
   .selector{ margin-top: 6px; }
   .toggles{ padding: 4px; gap:5px; }
   .toggles button{ padding: 6px 8px; font-size: 12px; }
   #hint{ font-size: 10px; }
 
-  /* 13) Boutons rapides compacts */
   .quickRow{ margin-top: 6px; gap:6px; }
   .miniBtn{ padding: 7px 9px; font-size: 12px; border-radius: 12px; }
 
-  /* 14) ✅ Le clavier (1–20) prend TOUT l’espace restant */
   .numbers{
     margin-top: 6px;
-    flex: 1;                 /* 🔥 prend le reste de la hauteur */
+    flex: 1;
     min-height: 0;
     display:grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 6px;
-    overflow:hidden;         /* ✅ NO SCROLL */
+    overflow:hidden;
   }
   .numbers .numBtn{
-    padding: 0;              /* on retire le padding */
-    height: 100%;            /* chaque bouton remplit sa cellule */
+    padding: 0;
+    height: 100%;
     border-radius: 14px;
     font-size: 13px;
   }
 
-  /* 15) Bouton Valider compact (pas sticky, pas scroll) */
-  .actionsRow{
-    margin-top: 6px;
-    gap:6px;
-  }
-  #applyBtn{
-    padding: 10px 12px;
-    font-size: 14px;
-  }
+  .actionsRow{ margin-top: 6px; gap:6px; }
+  #applyBtn{ padding: 10px 12px; font-size: 14px; }
 
-  /* 16) On masque le texte d’aide pour gagner de la place */
   #rulesNote{ display:none !important; }
 
-  /* 17) Cricket + History: pas de scroll non plus */
   .history{ height: 100%; overflow:hidden; max-height: none; }
   .cricketLegend{ display:none; }
   .cRow{ grid-template-columns: 68px 1fr; }
@@ -525,19 +763,17 @@
   .cHeaderLeft{ padding: 7px 7px; font-size: 11px; }
   .cHeaderCell{ padding: 7px 5px; font-size: 11px; }
 
-  /* 18) Mobile-only visible */
   .mobilePlayers, .tabs, .mobilePanels { display:flex; }
 }
 
+/* Mobile-only elements hidden on desktop */
+.mobilePlayers, .tabs, .mobilePanels { display:none; }
+@media (max-width: 640px){
+  .mobilePlayers, .tabs, .mobilePanels { display:flex; }
+  .grid2{ display:none; }
+}
+</style>
 
-    /* Mobile-only elements hidden on desktop */
-    .mobilePlayers, .tabs, .mobilePanels { display:none; }
-    @media (max-width: 640px){
-      .mobilePlayers, .tabs, .mobilePanels { display:flex; }
-      /* Hide desktop grid2 on mobile */
-      .grid2{ display:none; }
-    }
-  </style>
 </head>
 
 <body>
@@ -1473,6 +1709,7 @@
 
 </body>
 </html>
+
 
 
 
