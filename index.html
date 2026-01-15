@@ -378,7 +378,6 @@
       padding-bottom: env(safe-area-inset-bottom);
     }
   
-    /* ✅ Si jamais ça déborde, scroll interne uniquement dans les panels */
     .mobilePanels{
       margin-top: 8px;
       flex: 1;
@@ -387,13 +386,13 @@
       flex-direction: column;
       min-height: 0;
     }
-  
+    
     .panel{
       display:none;
       flex: 1;
-      overflow:auto;     /* 🔥 scroll seulement ici si besoin */
+      overflow:auto;     /* ✅ important */
       min-height: 0;
-      padding-bottom: 10px; /* petit confort pour que "Valider" respire */
+      padding-bottom: 10px;
     }
     .panel.active{ display:block; }
 
@@ -472,21 +471,6 @@
         border-color: rgba(43,101,255,.35);
         color: var(--text);
       }
-
-      /* Mobile panels (no scroll page; each panel fits) */
-      .mobilePanels{
-        margin-top: 8px;
-        flex: 1;
-        overflow:hidden;
-        display:flex;
-        flex-direction: column;
-      }
-      .panel{
-        display:none;
-        flex: 1;
-        overflow:hidden;
-      }
-      .panel.active{ display:block; }
 
       /* Make console super compact */
       .console{ padding: 10px; }
@@ -1470,4 +1454,5 @@
 
 </body>
 </html>
+
 
