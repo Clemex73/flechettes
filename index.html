@@ -48,6 +48,7 @@
   --shadow2: 0 8px 18px rgba(23,21,19,.08);
 
   --blur: blur(12px);
+  --r18:18px;
 
   /* typo un peu plus “moderne / app” */
   --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -801,19 +802,25 @@ body::before{
       .miniBtn{ padding: 10px 12px; font-size: 13px; border-radius: 16px; }
 
       /* Keypad takes remaining height */
-      .numbers .numBtn{
-        height: 100%;
-        border-radius: 18px;
-        font-size: 20px;     /* ✅ plus gros */
-        font-weight: 999;
-      
-        background: rgba(255,255,255,.82);
-        border: 1px solid rgba(23,21,19,.10);
-        box-shadow: var(--shadow2);
-      }
-      
-        /* ✅ clé: hauteur stable des touches */
-        grid-auto-rows: 1fr;
+      .numbers{
+          margin-top: 6px;
+          flex: 1;
+          min-height: 0;
+          display: grid;
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+          gap: 8px;
+          grid-auto-rows: 1fr; /* ✅ ici */
+        }
+        
+        .numbers .numBtn{
+          height: 100%;
+          border-radius: 18px;
+          font-size: 20px;
+          font-weight: 999;
+          background: rgba(255,255,255,.82);
+          border: 1px solid rgba(23,21,19,.10);
+          box-shadow: var(--shadow2);
+        }
 
       .actionsRow{ margin-top: 8px; gap:8px; }
       #applyBtn{ padding: 12px 12px; font-size: 15px; border-radius: 18px; }
@@ -1922,6 +1929,7 @@ body::before{
   </script>
 </body>
 </html>
+
 
 
 
