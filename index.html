@@ -788,15 +788,21 @@ button:disabled{
   .mobilePlayers, .tabs, .mobilePanels { display:flex; }
   
   body::before{
-    background-position: center 95px;     /* le logo derrière le header */
-    background-size: min(360px, 86vw);   /* un peu plus gros */
-    opacity: .18;                        /* plus visible */
-  }
+  background-position: center 38vh;   /* ✅ logo au milieu */
+  background-size: min(380px, 88vw);  /* un peu plus grand */
+  opacity: .22;                       /* plus visible */
+  filter: saturate(1) contrast(1.05);
+}
+#setup.card{
+  background: rgba(247,240,230,.72) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
 
   /* On descend la carte "setup" pour laisser voir le logo */
-  #setup{
-    margin-top: 90px;  /* ✅ augmente/diminue (70 à 120) selon ton goût */
-  }
+ #setup{
+  margin-top: 22vh;   /* ✅ descend le formulaire vers le bas */
+}
 }
 
 /* Mobile-only elements hidden on desktop */
@@ -1742,6 +1748,7 @@ button:disabled{
 
 </body>
 </html>
+
 
 
 
