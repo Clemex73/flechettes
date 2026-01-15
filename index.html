@@ -74,22 +74,6 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Watermark plus discret et propre (style mockup) */
-body::before{
-  content:"";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-
-  background-image: url("icon-192.png");
-  background-repeat: no-repeat;
-  background-position: center 34vh;
-  background-size: min(420px, 78vw);
-  opacity: .10;
-  filter: saturate(.9) contrast(1.05);
-}
-
     .wrap{
       position: relative;
       z-index: 1;
@@ -942,6 +926,101 @@ body::before{
   .cricketTitle{ display:none !important; }
   */
     }
+  /* =========================
+   SETUP PAGE – Modern redesign
+   ========================= */
+
+/* Fond plus clean (sans watermark) */
+body{
+  background:
+    radial-gradient(900px 700px at 15% 0%, rgba(196,43,43,.06), transparent 60%),
+    radial-gradient(900px 700px at 85% 10%, rgba(23,21,19,.05), transparent 60%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+}
+
+/* Carte setup = plus premium */
+#setup.card{
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(23,21,19,.10);
+  box-shadow: 0 22px 60px rgba(23,21,19,.12);
+  padding: 18px;
+}
+
+/* Sections + respiration */
+#setup .row{ gap: 16px; }
+#setup .hr{ margin: 14px 0; opacity: .9; }
+
+/* Labels plus “app” */
+#setup label{
+  font-size: 12px;
+  color: rgba(23,21,19,.70);
+  font-weight: 900;
+  letter-spacing: .3px;
+  margin: 12px 0 6px;
+}
+
+/* Inputs / selects plus modernes */
+#setup select,
+#setup input{
+  border-radius: 18px;
+  border: 1px solid rgba(23,21,19,.10);
+  background: rgba(255,255,255,.85);
+  padding: 14px 14px;
+  box-shadow: 0 10px 24px rgba(23,21,19,.06);
+}
+
+#setup select:focus,
+#setup input:focus{
+  border-color: rgba(196,43,43,.35);
+  box-shadow: 0 0 0 4px rgba(196,43,43,.12), 0 14px 30px rgba(23,21,19,.10);
+}
+
+/* Texte d’aide plus discret */
+#setup .muted{
+  font-size: 12px;
+  color: rgba(23,21,19,.55);
+  line-height: 1.35;
+}
+
+/* Zone noms joueurs = stack clean */
+#names input{ margin-bottom: 10px !important; }
+
+/* Boutons setup = style premium + ergonomique */
+#setup .actionsRow{
+  gap: 12px;
+}
+
+#startBtn{
+  border-radius: 20px;
+  padding: 14px 14px;
+  font-size: 15px;
+  box-shadow: 0 18px 34px rgba(196,43,43,.22);
+}
+
+#loadBtn{
+  border-radius: 20px;
+  padding: 14px 14px;
+  font-size: 15px;
+  background: rgba(255,255,255,.92);
+}
+
+/* Mobile : la carte doit être plus “centrée” et plus compacte */
+@media (max-width: 640px){
+  #setup{ margin-top: 14vh; } /* ajuste 10–18vh selon ton goût */
+  #setup.card{
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  /* Les 2 boutons en colonne (plus moderne) */
+  #setup .actionsRow{
+    flex-direction: column;
+  }
+  #setup .actionsRow > *{
+    flex: 1 1 auto;
+  }
+}
+
   </style>
 </head>
 
@@ -1914,6 +1993,7 @@ body::before{
   </script>
 </body>
 </html>
+
 
 
 
