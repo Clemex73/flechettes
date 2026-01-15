@@ -75,11 +75,30 @@ body{
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
 }
+/* Watermark logo (grand, discret) */
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
 
+  background-image: url("icon-192.png");
+  background-repeat: no-repeat;
+  background-position: center 120px; /* ajuste si besoin */
+  background-size: min(520px, 78vw);
+  opacity: .10; /* intensité */
+  filter: saturate(.95) contrast(1.02);
+}
+
+/* Assure que le contenu passe au-dessus */
 .wrap{
   max-width: 1100px;
   margin: 0 auto;
   padding: 18px;
+
+  position: relative;
+  z-index: 1;
 }
 
 /* =========================
@@ -1709,6 +1728,7 @@ button:disabled{
 
 </body>
 </html>
+
 
 
 
