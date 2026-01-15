@@ -2,18 +2,16 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-
-  <!-- ✅ iPhone/PWA friendly viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-
   <title>Fléchettes – Scoreboard</title>
 
-  <!-- ✅ PWA (GitHub Pages + install iPhone) -->
+  <!-- PWA -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#2b65ff">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
 
   <style>
     :root{
@@ -30,6 +28,7 @@
       --shadow: 0 12px 40px rgba(0,0,0,.45);
     }
     *{box-sizing:border-box}
+    html, body{ height: 100%; }
     body{
       margin:0;
       background: radial-gradient(1200px 800px at 20% 0%, rgba(43,101,255,.25), transparent 55%),
@@ -37,11 +36,10 @@
                   var(--bg);
       color:var(--text);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-
-      /* ✅ iPhone safe areas */
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
     }
+
     .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
     header{
       display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
@@ -99,6 +97,7 @@
     .muted{ color: var(--muted2); font-size: 12px; }
     .hr{ height:1px; background: rgba(255,255,255,.10); margin: 12px 0; }
 
+    /* --- Desktop scoreboard (grid) --- */
     .scoreboard{
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -132,9 +131,6 @@
     .win{ color: var(--ok); font-weight: 900; }
     .bust{ color: var(--warn); font-weight: 900; }
 
-    .grid2{ display:grid; grid-template-columns: 1.12fr .88fr; gap: 12px; }
-    @media (max-width: 860px){ .grid2{ grid-template-columns: 1fr; } }
-
     .turnBanner{
       margin-top: 10px;
       padding: 12px;
@@ -147,6 +143,7 @@
     .kbd{ font-size: 11px; color: var(--muted); display:flex; gap:8px; flex-wrap:wrap; }
     .kbd span{ padding: 4px 8px; border-radius: 999px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); }
 
+    /* --- Console --- */
     .console{
       border-radius: var(--radius);
       border:1px solid rgba(255,255,255,.10);
@@ -167,6 +164,7 @@
       color: var(--muted);
     }
     .chip b{ color: var(--text); font-weight: 900; }
+
     .dartsRow{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
@@ -184,6 +182,7 @@
     .dartSlot .label{ font-size: 14px; font-weight: 900; }
     .dartSlot .pts{ font-size: 18px; font-weight: 900; }
     .dartSlot.empty{ opacity:.55; }
+
     .totalBox{
       border-radius: 16px;
       border:1px solid rgba(43,101,255,.35);
@@ -223,7 +222,6 @@
       border-color: rgba(43,101,255,.35);
       color: var(--text);
     }
-
     .quickRow{
       display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px;
     }
@@ -236,15 +234,11 @@
       box-shadow:none;
       font-weight: 900;
     }
-
     .numbers{
       margin-top: 10px;
       display:grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 8px;
-    }
-    @media (max-width: 520px){
-      .numbers{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
     .numBtn{
       padding: 12px 0;
@@ -261,11 +255,16 @@
     }
     .actionsRow > *{ flex: 1 1 160px; }
 
+    /* Desktop layout grid */
+    .grid2{ display:grid; grid-template-columns: 1.12fr .88fr; gap: 12px; }
+    @media (max-width: 860px){ .grid2{ grid-template-columns: 1fr; } }
+
+    /* History */
     .history{ max-height: 360px; overflow:auto; border-radius: var(--radius); border:1px solid rgba(255,255,255,.10); }
     .hist-item{ padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08); font-size: 13px; }
     .hist-item:last-child{ border-bottom:none; }
 
-    /* --- Cricket board --- */
+    /* Cricket board */
     .cricketWrap{ margin-top: 12px; }
     .cricketTitle{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
     .cricketLegend{ display:flex; gap:8px; flex-wrap:wrap; }
@@ -291,30 +290,18 @@
       border-right:1px solid rgba(255,255,255,.08);
       background: rgba(255,255,255,.04);
     }
-    .cCells{
-      display:grid;
-      gap: 0;
-    }
+    .cCells{ display:grid; gap: 0; }
     .cCell{
       padding: 10px 10px;
       border-right:1px solid rgba(255,255,255,.08);
       display:flex; align-items:center; justify-content:center;
       font-weight: 900;
       color: var(--muted);
-      position: relative;
     }
     .cCell:last-child{ border-right:none; }
-    .cCell.active{
-      background: rgba(43,101,255,.12);
-      color: var(--text);
-    }
-    .cCell.closed{
-      color: var(--ok);
-    }
-    .cCell .marks{
-      letter-spacing: 1px;
-      font-size: 14px;
-    }
+    .cCell.active{ background: rgba(43,101,255,.12); color: var(--text); }
+    .cCell.closed{ color: var(--ok); }
+    .cCell .marks{ letter-spacing: 1px; font-size: 14px; }
     .cTarget .openTag{
       font-size: 10px;
       padding: 4px 8px;
@@ -350,10 +337,7 @@
       background: rgba(255,255,255,.04);
       font-weight: 900;
     }
-    .cHeaderRight{
-      display:grid;
-      background: rgba(255,255,255,.03);
-    }
+    .cHeaderRight{ display:grid; background: rgba(255,255,255,.03); }
     .cHeaderCell{
       padding: 10px 10px;
       font-size: 12px;
@@ -361,13 +345,167 @@
       font-weight: 900;
       text-align:center;
       border-right:1px solid rgba(255,255,255,.08);
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
+      white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
     }
     .cHeaderCell:last-child{ border-right:none; }
+
+    /* =========================
+       MOBILE: NO VERTICAL SCROLL
+       ========================= */
+    @media (max-width: 640px){
+      body{ overflow: hidden; }  /* <- pas de scroll page */
+      .wrap{ padding: 12px; max-width: 100%; height: 100vh; }
+      header{ margin: 6px 0 10px; }
+      header h1{ font-size: 16px; }
+      .card{ padding: 12px; }
+
+      /* Game screen becomes "app shell" */
+      #game{
+        height: calc(100vh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        display:flex;
+        flex-direction: column;
+        overflow:hidden;
+      }
+
+      /* Hide big desktop scoreboard grid; use compact top strip instead */
+      .scoreboard{ display:none; }
+
+      /* Compact top players strip */
+      .mobilePlayers{
+        display:flex;
+        gap:8px;
+        overflow-x:auto;
+        padding-bottom: 8px;
+        margin-top: 10px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .mpCard{
+        flex: 0 0 auto;
+        min-width: 122px;
+        border-radius: 14px;
+        border:1px solid rgba(255,255,255,.12);
+        background: rgba(255,255,255,.05);
+        padding: 8px 10px;
+      }
+      .mpCard.active{
+        background: rgba(43,101,255,.16);
+        border-color: rgba(43,101,255,.45);
+        outline: 2px solid rgba(43,101,255,.25);
+      }
+      .mpTop{
+        display:flex; justify-content:space-between; gap:8px; align-items:center;
+        font-size: 11px; color: var(--muted);
+      }
+      .mpName{
+        font-size: 12px;
+        font-weight: 950;
+        color: var(--text);
+        white-space: nowrap;
+        overflow:hidden;
+        text-overflow: ellipsis;
+        max-width: 92px;
+      }
+      .mpScore{
+        font-size: 18px;
+        font-weight: 950;
+        margin-top: 4px;
+      }
+
+      /* Turn banner compact */
+      .turnBanner{ margin-top: 8px; padding: 10px; }
+      .kbd{ display:none; } /* on mobile, hide shortcuts row */
+
+      /* Tabs for mobile views */
+      .tabs{
+        margin-top: 8px;
+        display:flex;
+        gap:8px;
+        border:1px solid rgba(255,255,255,.10);
+        background: rgba(255,255,255,.05);
+        border-radius: 999px;
+        padding: 6px;
+      }
+      .tabs button{
+        width:auto;
+        flex: 1;
+        padding: 9px 10px;
+        border-radius: 999px;
+        background: transparent;
+        border:1px solid transparent;
+        box-shadow:none;
+        color: var(--muted);
+        font-weight: 950;
+      }
+      .tabs button.active{
+        background: rgba(43,101,255,.20);
+        border-color: rgba(43,101,255,.35);
+        color: var(--text);
+      }
+
+      /* Mobile panels (no scroll page; each panel fits) */
+      .mobilePanels{
+        margin-top: 8px;
+        flex: 1;
+        overflow:hidden;
+        display:flex;
+        flex-direction: column;
+      }
+      .panel{
+        display:none;
+        flex: 1;
+        overflow:hidden;
+      }
+      .panel.active{ display:block; }
+
+      /* Make console super compact */
+      .console{ padding: 10px; }
+      .readout{ margin-top: 0; gap:8px; }
+      .chip{ padding: 6px 9px; font-size: 11px; }
+      .dartsRow{ gap:8px; margin-top: 8px; }
+      .dartSlot{ min-height: 56px; padding: 10px; }
+      .dartSlot .label{ font-size: 12px; }
+      .dartSlot .pts{ font-size: 14px; }
+      .totalBox{ margin-top: 8px; padding: 10px; }
+      .totalBox .total{ font-size: 22px; }
+      .selector{ margin-top: 8px; }
+      .toggles{ padding: 5px; gap:6px; }
+      .toggles button{ padding: 7px 10px; }
+      .quickRow{ margin-top: 8px; }
+      .miniBtn{ padding: 8px 10px; border-radius: 12px; }
+      .numbers{
+        margin-top: 8px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .numBtn{ padding: 11px 0; border-radius: 14px; font-size: 14px; }
+
+      .actionsRow{ margin-top: 8px; gap:8px; }
+      .actionsRow > *{ flex: 1 1 120px; }
+      #rulesNote{ display:none; } /* pour gagner de la place */
+
+      /* Cricket board on mobile: make rows tighter */
+      .cricketLegend{ display:none; }
+      .cRow{ grid-template-columns: 72px 1fr; }
+      .cTarget{ padding: 8px 8px; font-size: 12px; }
+      .cCell{ padding: 8px 6px; }
+      .cHeaderRow{ margin-top: 8px; }
+      .cHeaderLeft{ padding: 8px 8px; font-size: 11px; }
+      .cHeaderCell{ padding: 8px 6px; font-size: 11px; }
+
+      /* History panel: internal scroll only */
+      .history{ max-height: none; height: 100%; overflow:auto; }
+    }
+
+    /* Mobile-only elements hidden on desktop */
+    .mobilePlayers, .tabs, .mobilePanels { display:none; }
+    @media (max-width: 640px){
+      .mobilePlayers, .tabs, .mobilePanels { display:flex; }
+      /* Hide desktop grid2 on mobile */
+      .grid2{ display:none; }
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
@@ -432,7 +570,11 @@
         </div>
       </div>
 
+      <!-- Desktop scoreboard -->
       <div class="scoreboard" id="scoreboard"></div>
+
+      <!-- Mobile compact scoreboard -->
+      <div class="mobilePlayers" id="mobilePlayers"></div>
 
       <div class="turnBanner">
         <b id="turnLabel">—</b>
@@ -443,26 +585,24 @@
         </div>
       </div>
 
-      <!-- Cricket target board -->
-      <div id="cricketBoard" class="cricketWrap" style="display:none;">
-        <div class="cricketTitle">
-          <b>🎯 Cible Cricket</b>
-          <div class="cricketLegend">
-            <span class="chip">Marques : <b>/</b> = 1, <b>X</b> = 2, <b>◉</b> = 3 (fermé)</span>
-            <span class="chip">“Open” = le joueur actif peut scorer</span>
-            <span class="chip">“All closed” = fermé pour tous</span>
-          </div>
-        </div>
-
-        <div class="cHeaderRow" id="cHeaderRow"></div>
-        <div class="cricketGrid" id="cGrid"></div>
+      <!-- Mobile tabs -->
+      <div class="tabs" id="tabs" role="tablist" aria-label="Vue mobile">
+        <button type="button" id="tabInput" class="active">Saisie</button>
+        <button type="button" id="tabCricket">Cricket</button>
+        <button type="button" id="tabHistory">Historique</button>
       </div>
 
-      <div class="hr"></div>
+      <!-- Mobile panels -->
+      <div class="mobilePanels" id="mobilePanels">
+        <div class="panel active" id="panelInput"></div>
+        <div class="panel" id="panelCricket"></div>
+        <div class="panel" id="panelHistory"></div>
+      </div>
 
-      <div class="grid2">
+      <!-- Desktop layout below -->
+      <div class="grid2" id="desktopGrid">
         <!-- CONSOLE -->
-        <div class="console">
+        <div class="console" id="consoleDesktop">
           <div class="readout">
             <div class="chips">
               <span class="chip">Fléchettes : <b id="dartsCount">0</b>/3</span>
@@ -508,8 +648,21 @@
           </div>
         </div>
 
-        <!-- HISTORY -->
-        <div class="card" style="background: rgba(255,255,255,.03);">
+        <!-- RIGHT: cricket + history -->
+        <div class="card" style="background: rgba(255,255,255,.03);" id="rightDesktop">
+          <div id="cricketBoard" class="cricketWrap" style="display:none;">
+            <div class="cricketTitle">
+              <b>🎯 Cible Cricket</b>
+              <div class="cricketLegend">
+                <span class="chip">Marques : <b>/</b> = 1, <b>X</b> = 2, <b>◉</b> = 3</span>
+                <span class="chip">Open = le joueur actif peut scorer</span>
+              </div>
+            </div>
+            <div class="cHeaderRow" id="cHeaderRow"></div>
+            <div class="cricketGrid" id="cGrid"></div>
+            <div class="hr"></div>
+          </div>
+
           <b>Historique</b>
           <div class="muted" style="margin:6px 0 10px">Derniers tours en haut</div>
           <div class="history" id="history"></div>
@@ -537,6 +690,8 @@
   const loadBtn = $("loadBtn");
 
   const scoreboardEl = $("scoreboard");
+  const mobilePlayersEl = $("mobilePlayers");
+
   const historyEl = $("history");
   const turnLabelEl = $("turnLabel");
 
@@ -567,11 +722,27 @@
   const missBtn = $("missBtn"), sbBtn = $("sbBtn"), dbBtn = $("dbBtn");
   const numbersEl = $("numbers");
 
-  const STORAGE_KEY = "flechettes_app_state_v4_cricket";
+  // Mobile tabs/panels
+  const tabInput = $("tabInput");
+  const tabCricket = $("tabCricket");
+  const tabHistory = $("tabHistory");
+  const panelInput = $("panelInput");
+  const panelCricket = $("panelCricket");
+  const panelHistory = $("panelHistory");
+  const consoleDesktop = $("consoleDesktop");
+  const rightDesktop = $("rightDesktop");
+  const cricketBoardDesktop = $("cricketBoard");
+
+  const STORAGE_KEY = "flechettes_app_state_v5_mobile_noscroll";
   const CRICKET_TARGETS = [20,19,18,17,16,15,"B"];
   const BULL_POINTS_PER_MARK = 25;
 
   let state = null;
+  let mobileView = "input"; // input | cricket | history
+
+  function isMobile(){
+    return window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
+  }
 
   function renderNameInputs() {
     const n = Number(numPlayersEl.value);
@@ -629,7 +800,6 @@
     if (mode === "cricket"){
       st.cricket = { marks: createCricketMarks(n) };
     }
-
     return st;
   }
 
@@ -704,8 +874,7 @@
       dartsRowEl.appendChild(slot);
     }
 
-    const total = getTotal();
-    turnTotalEl.textContent = total;
+    turnTotalEl.textContent = getTotal();
 
     const full = darts.length >= 3 || state.finished;
     numbersEl.querySelectorAll("button").forEach(b => b.disabled = full || b.dataset.disabled === "1");
@@ -752,6 +921,7 @@
   }
 
   function renderScoreboard(){
+    // Desktop grid
     scoreboardEl.innerHTML = "";
     state.players.forEach((p, idx) => {
       const div = document.createElement("div");
@@ -766,6 +936,22 @@
         <div class="small">Tours joués : ${p.turns}</div>
       `;
       scoreboardEl.appendChild(div);
+    });
+
+    // Mobile top strip
+    mobilePlayersEl.innerHTML = "";
+    state.players.forEach((p, idx) => {
+      const card = document.createElement("div");
+      card.className = "mpCard" + (idx===state.current ? " active" : "");
+      const st = p.isWinner ? "WIN" : (state.finished ? "END" : `#${p.turns+1}`);
+      card.innerHTML = `
+        <div class="mpTop">
+          <div class="mpName" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div>
+          <div>${st}</div>
+        </div>
+        <div class="mpScore">${p.score}</div>
+      `;
+      mobilePlayersEl.appendChild(card);
     });
   }
 
@@ -799,7 +985,6 @@
     if (m === 2) return "X";
     return "◉";
   }
-
   function isTargetAllClosed(targetKey){
     const marks = state.cricket.marks;
     for (let i=0;i<marks.length;i++){
@@ -807,16 +992,13 @@
     }
     return true;
   }
-
   function playerClosedTarget(playerIdx, targetKey){
     return (state.cricket.marks[playerIdx][targetKey] || 0) >= 3;
   }
-
   function playerClosedAll(playerIdx){
     const m = state.cricket.marks[playerIdx];
     return CRICKET_TARGETS.every(t => (m[String(t)] || 0) >= 3);
   }
-
   function cricketApplyHit(playerIdx, hit){
     const t = hit.targetKey;
     if (!CRICKET_TARGETS.map(String).includes(t)) return {addedMarks:0, addedPoints:0};
@@ -850,10 +1032,8 @@
     if (points > 0){
       state.players[playerIdx].score += points;
     }
-
     return {addedMarks: Math.min(toAdd, 3-before), addedPoints: points};
   }
-
   function cricketCheckWin(playerIdx){
     if (!playerClosedAll(playerIdx)) return false;
     const myScore = state.players[playerIdx].score;
@@ -866,8 +1046,8 @@
       cricketBoardEl.style.display = "none";
       return;
     }
-
     cricketBoardEl.style.display = "";
+
     const n = state.players.length;
 
     cHeaderRowEl.innerHTML = `
@@ -923,26 +1103,107 @@
     });
   }
 
+  function buildNumbers(){
+    numbersEl.innerHTML = "";
+    for (let n=1;n<=20;n++){
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "numBtn";
+      b.textContent = n;
+
+      if (state && state.mode === "cricket" && n < 15){
+        b.dataset.disabled = "1";
+        b.disabled = true;
+        b.style.opacity = ".35";
+      }
+
+      b.addEventListener("click", ()=>addNumber(n));
+      numbersEl.appendChild(b);
+    }
+  }
+
+  function syncMobilePanels(){
+    // On mobile we "mount" the console + cricket + history into panels, but reuse the same nodes.
+    if (!isMobile()) return;
+
+    // Panel INPUT should contain consoleDesktop node
+    if (panelInput && consoleDesktop && consoleDesktop.parentElement !== panelInput){
+      panelInput.innerHTML = "";
+      panelInput.appendChild(consoleDesktop);
+    }
+
+    // Panel CRICKET should contain cricketBoard + (optional) a small hint if not cricket
+    panelCricket.innerHTML = "";
+    if (state && state.mode === "cricket"){
+      panelCricket.appendChild(cricketBoardDesktop);
+    } else {
+      panelCricket.innerHTML = `<div class="muted" style="padding:10px">Le mode Cricket n’est pas sélectionné.</div>`;
+    }
+
+    // Panel HISTORY should contain rightDesktop history node
+    panelHistory.innerHTML = "";
+    const historyBlock = document.createElement("div");
+    historyBlock.className = "card";
+    historyBlock.style.background = "rgba(255,255,255,.03)";
+    historyBlock.style.height = "100%";
+    historyBlock.style.display = "flex";
+    historyBlock.style.flexDirection = "column";
+    historyBlock.innerHTML = `
+      <b>Historique</b>
+      <div class="muted" style="margin:6px 0 10px">Derniers tours en haut</div>
+    `;
+    const h = historyEl; // reuse
+    h.style.height = "100%";
+    h.style.maxHeight = "none";
+    historyBlock.appendChild(h);
+    panelHistory.appendChild(historyBlock);
+  }
+
+  function setMobileView(view){
+    mobileView = view;
+
+    // tabs active
+    tabInput.classList.toggle("active", view==="input");
+    tabCricket.classList.toggle("active", view==="cricket");
+    tabHistory.classList.toggle("active", view==="history");
+
+    // panels active
+    panelInput.classList.toggle("active", view==="input");
+    panelCricket.classList.toggle("active", view==="cricket");
+    panelHistory.classList.toggle("active", view==="history");
+
+    // If switching to cricket while not in cricket mode, keep it but shows hint
+    saveState();
+  }
+
   function render(){
     if (!state) return;
 
-    renderCricketBoard();
     renderScoreboard();
 
     const p = state.players[state.current];
     turnLabelEl.textContent = state.finished ? "Partie terminée" : `🎯 ${p.name}, à toi de jouer !`;
 
+    renderCricketBoard();
     renderHistory();
 
     setMult(state.mult || 1);
     updateConsole();
 
     if (state.mode === "x01"){
-      rulesNoteEl.innerHTML = `X01 : si le total fait passer sous 0 → <b>bust</b>. Tu peux valider avec 1, 2 ou 3 fléchettes.`;
+      rulesNoteEl.innerHTML = `X01 : si le total fait passer sous 0 → <b>bust</b>.`;
     } else if (state.mode === "countup"){
-      rulesNoteEl.textContent = `Count Up : addition simple. Tu peux valider avec 1, 2 ou 3 fléchettes.`;
+      rulesNoteEl.textContent = `Count Up : addition simple.`;
     } else {
-      rulesNoteEl.innerHTML = `Cricket : 20→15 + Bull. Fermer à 3 marques. Tu scores si toi tu as fermé la cible et pas tout le monde.`;
+      rulesNoteEl.innerHTML = `Cricket : fermer à 3 marques.`;
+    }
+
+    // mobile panels mount
+    if (isMobile()){
+      syncMobilePanels();
+      // If user is in cricket tab but mode isn't cricket, keep
+      // If mode is cricket and view isn't set, keep input by default
+      setMobileView(mobileView || "input");
     }
 
     saveState();
@@ -979,7 +1240,7 @@
 
       state.currentDarts = [];
       if (!state.finished){
-        if (!(kind==="bust")) nextPlayer();
+        if (kind !== "bust") nextPlayer();
       }
       render();
       return;
@@ -1090,25 +1351,6 @@
     render();
   }
 
-  function buildNumbers(){
-    numbersEl.innerHTML = "";
-    for (let n=1;n<=20;n++){
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "numBtn";
-      b.textContent = n;
-
-      if (state && state.mode === "cricket" && n < 15){
-        b.dataset.disabled = "1";
-        b.disabled = true;
-        b.style.opacity = ".35";
-      }
-
-      b.addEventListener("click", ()=>addNumber(n));
-      numbersEl.appendChild(b);
-    }
-  }
-
   // Setup events
   numPlayersEl.addEventListener("change", renderNameInputs);
   modeEl.addEventListener("change", () => {
@@ -1119,6 +1361,7 @@
     state = createGameFromSetup();
     showGame();
     buildNumbers();
+    mobileView = "input";
     render();
   });
 
@@ -1130,7 +1373,6 @@
     if (state.mode === "cricket" && (!state.cricket || !state.cricket.marks)){
       state.cricket = { marks: createCricketMarks(state.players.length) };
     }
-
     showGame();
     buildNumbers();
     render();
@@ -1162,12 +1404,23 @@
     showSetup();
   });
 
+  // Mobile tabs
+  tabInput.addEventListener("click", ()=>setMobileView("input"));
+  tabCricket.addEventListener("click", ()=>setMobileView("cricket"));
+  tabHistory.addEventListener("click", ()=>setMobileView("history"));
+
   // Keyboard shortcuts
   window.addEventListener("keydown", (e) => {
     if (!state || setupEl.style.display !== "none") return;
     if (e.key === "Enter") { e.preventDefault(); if (!applyBtn.disabled) applyTurn(); }
     if (e.key === "Backspace") { e.preventDefault(); backDart(); }
     if (e.key === "Escape") { e.preventDefault(); clearDarts(); }
+  });
+
+  // Handle resize (switching orientation / viewport)
+  window.addEventListener("resize", () => {
+    if (!state) return;
+    render();
   });
 
   // init
@@ -1177,7 +1430,7 @@
 })();
 </script>
 
-<!-- ✅ Service Worker register (offline + install PWA) -->
+<!-- Service Worker -->
 <script>
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./sw.js");
