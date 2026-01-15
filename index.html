@@ -20,66 +20,72 @@
        ========================================================== */
 
     :root{
-      /* Palette */
-      --bg0:#F6EFE4;
-      --bg1:#EFE4D4;
-      --paper: rgba(255,255,255,.55);
-      --paper2: rgba(255,255,255,.38);
-      --ink:#171513;
-      --ink2: rgba(23,21,19,.72);
-      --ink3: rgba(23,21,19,.52);
+  /* Palette (beige majoritaire + noir + rouge léger) */
+  --bg0:#F6EFE4;
+  --bg1:#EFE4D4;
 
-      --line: rgba(23,21,19,.10);
-      --line2: rgba(23,21,19,.14);
+  --surface: rgba(255,255,255,.62);   /* cartes */
+  --surface2: rgba(255,255,255,.42);  /* sous-cartes */
+  --surface3: rgba(255,255,255,.30);  /* éléments (chips/tabs) */
 
-      --accent:#C42B2B;
-      --accentDeep:#9A1F1F;
-      --accentSoft: rgba(196,43,43,.14);
+  --ink:#171513;
+  --ink2: rgba(23,21,19,.72);
+  --ink3: rgba(23,21,19,.50);
 
-      --ok:#1D7A4A;
-      --warn:#B36A2E;
+  --line: rgba(23,21,19,.10);
+  --line2: rgba(23,21,19,.14);
 
-      --r18:18px;
-      --r16:16px;
-      --r14:14px;
-      --shadow: 0 18px 50px rgba(23,21,19,.14);
-      --shadow2: 0 10px 22px rgba(23,21,19,.10);
+  --accent:#C42B2B;
+  --accentDeep:#9A1F1F;
+  --accentSoft: rgba(196,43,43,.12);
 
-      --blur: blur(10px);
+  /* Style “dashboard” */
+  --r20:20px;
+  --r16:16px;
+  --r12:12px;
 
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
+  --shadow: 0 14px 34px rgba(23,21,19,.10);
+  --shadow2: 0 8px 18px rgba(23,21,19,.08);
+
+  --blur: blur(12px);
+
+  /* typo un peu plus “moderne / app” */
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
 
     *{ box-sizing:border-box; }
     html, body{ height:100%; }
 
     body{
-      margin:0;
-      font-family: var(--font);
-      color: var(--ink);
-      background:
-        radial-gradient(900px 700px at 12% 0%, rgba(196,43,43,.10), transparent 60%),
-        radial-gradient(900px 700px at 90% 12%, rgba(23,21,19,.08), transparent 58%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-    }
+  margin:0;
+  font-family: var(--font);
+  color: var(--ink);
 
-    /* Watermark (logo) – visible mais premium */
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
+  /* Fond plus “flat dashboard” */
+  background:
+    radial-gradient(900px 700px at 15% 0%, rgba(196,43,43,.08), transparent 60%),
+    radial-gradient(900px 700px at 85% 10%, rgba(23,21,19,.06), transparent 60%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
 
-      background-image: url("icon-192.png");
-      background-repeat: no-repeat;
-      background-position: center 34vh;            /* 👈 centre “présentation” */
-      background-size: min(460px, 82vw);
-      opacity: .18;
-      filter: saturate(1) contrast(1.05);
-    }
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Watermark plus discret et propre (style mockup) */
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background-image: url("icon-192.png");
+  background-repeat: no-repeat;
+  background-position: center 34vh;
+  background-size: min(420px, 78vw);
+  opacity: .10;
+  filter: saturate(.9) contrast(1.05);
+}
 
     .wrap{
       position: relative;
@@ -97,12 +103,16 @@
       top: 0;
       z-index: 5;
       padding-top: env(safe-area-inset-top);
+    
       margin: -16px -16px 14px;
-      padding: 12px 16px 10px;
-      background: linear-gradient(180deg, rgba(246,239,228,.78), rgba(246,239,228,.45));
+      padding: 12px 16px;
+    
+      /* Barre nette (style dashboard) */
+      background: rgba(246,239,228,.92);
+      border-bottom: 1px solid rgba(23,21,19,.08);
+    
       backdrop-filter: var(--blur);
       -webkit-backdrop-filter: var(--blur);
-      border-bottom: 1px solid rgba(23,21,19,.06);
     }
 
     .brandRow{
@@ -130,24 +140,20 @@
     .brand h1{
       margin:0;
       font-size: 16px;
+      font-weight: 950;
       letter-spacing:.2px;
-      font-weight: 900;
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
     }
 
     .pill{
       display:inline-flex;
       align-items:center;
-      gap:8px;
       padding: 8px 12px;
       border-radius: 999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.40);
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
+    
+      background: rgba(255,255,255,.70);
+      border: 1px solid rgba(23,21,19,.10);
       box-shadow: var(--shadow2);
+    
       font-size: 12px;
       color: var(--ink2);
       white-space: nowrap;
@@ -157,19 +163,21 @@
        Surfaces / cards / text
        ---------------------------------------------------------- */
     .card{
-      border-radius: var(--r18);
-      border:1px solid rgba(23,21,19,.10);
-      background: var(--paper);
+      border-radius: var(--r20);
+      border: 1px solid rgba(23,21,19,.10);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    
       backdrop-filter: var(--blur);
       -webkit-backdrop-filter: var(--blur);
-      box-shadow: var(--shadow);
+    
       padding: 14px;
     }
-
+    
     .subcard{
       border-radius: var(--r16);
-      border:1px solid rgba(23,21,19,.10);
-      background: rgba(255,255,255,.38);
+      border: 1px solid rgba(23,21,19,.10);
+      background: var(--surface2);
       box-shadow: var(--shadow2);
       padding: 12px;
     }
@@ -224,34 +232,40 @@
       width:100%;
       padding: 12px 12px;
       border-radius: var(--r16);
-      border:1px solid transparent;
+      border: 1px solid rgba(23,21,19,.10);
+    
       cursor:pointer;
       font-weight: 950;
       letter-spacing: .2px;
+    
       transition: transform .06s ease, filter .15s ease, box-shadow .15s ease;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+    
+      background: rgba(255,255,255,.70);
+      box-shadow: var(--shadow2);
     }
+    
     button:active{ transform: translateY(1px); }
-
+    
     button.primary{
       color: #fff;
+      border: 1px solid rgba(0,0,0,0);
       background: linear-gradient(180deg, var(--accent), var(--accentDeep));
-      box-shadow: 0 14px 28px rgba(196,43,43,.20);
+      box-shadow: 0 14px 26px rgba(196,43,43,.18);
     }
+
     button.primary:hover{ filter: brightness(1.03); }
 
     button.secondary{
       color: var(--ink);
-      background: rgba(255,255,255,.50);
-      border-color: rgba(23,21,19,.14);
-      box-shadow: 0 10px 20px rgba(23,21,19,.08);
+      background: rgba(255,255,255,.78);
     }
 
     button.danger{
       color:#fff;
       background: linear-gradient(180deg, #C42B2B, #8D1919);
-      box-shadow: 0 14px 28px rgba(196,43,43,.22);
+      box-shadow: 0 14px 26px rgba(196,43,43,.22);
     }
 
     button:disabled{
@@ -708,30 +722,34 @@
 
       /* Tabs – nicer segmented control */
       .tabs{
-        display:flex;
-        gap:6px;
-        margin-top: 8px;
-        padding: 6px;
-        border-radius: 999px;
-        border:1px solid rgba(23,21,19,.10);
-        background: rgba(255,255,255,.40);
-        box-shadow: 0 10px 18px rgba(23,21,19,.08);
-      }
-      .tabs button{
-        width: 100%;
-        padding: 10px 8px;
-        font-size: 13px;
-        border-radius: 999px;
-        background: transparent;
-        border:1px solid transparent;
-        color: var(--ink3);
-        box-shadow:none;
-      }
-      .tabs button.active{
-        background: rgba(196,43,43,.14);
-        border-color: rgba(196,43,43,.18);
-        color: var(--ink);
-      }
+      display:flex;
+      gap:6px;
+      margin-top: 8px;
+      padding: 6px;
+    
+      border-radius: 999px;
+      border: 1px solid rgba(23,21,19,.10);
+      background: rgba(255,255,255,.60);
+      box-shadow: var(--shadow2);
+    }
+    
+    .tabs button{
+      width: 100%;
+      padding: 10px 8px;
+      font-size: 13px;
+    
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--ink3);
+      box-shadow:none;
+    }
+    
+    .tabs button.active{
+      background: rgba(255,255,255,.85);
+      border-color: rgba(23,21,19,.10);
+      color: var(--ink);
+    }
 
       /* Panels (no vertical scroll) */
       .mobilePanels{
@@ -783,23 +801,19 @@
       .miniBtn{ padding: 10px 12px; font-size: 13px; border-radius: 16px; }
 
       /* Keypad takes remaining height */
-      .numbers{
-        margin-top: 6px;
-        flex: 1;
-        min-height: 0;
-        display:grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 8px;
+      .numbers .numBtn{
+        height: 100%;
+        border-radius: 18px;
+        font-size: 20px;     /* ✅ plus gros */
+        font-weight: 999;
+      
+        background: rgba(255,255,255,.82);
+        border: 1px solid rgba(23,21,19,.10);
+        box-shadow: var(--shadow2);
+      }
       
         /* ✅ clé: hauteur stable des touches */
         grid-auto-rows: 1fr;
-      }
-      .numbers .numBtn{
-        padding: 0;
-        height: 100%;
-        border-radius: 18px;
-        font-size: 14px;
-      }
 
       .actionsRow{ margin-top: 8px; gap:8px; }
       #applyBtn{ padding: 12px 12px; font-size: 15px; border-radius: 18px; }
@@ -1908,5 +1922,6 @@
   </script>
 </body>
 </html>
+
 
 
