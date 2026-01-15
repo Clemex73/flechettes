@@ -21,6 +21,8 @@
 
     :root{
   /* Palette (beige majoritaire + noir + rouge léger) */
+  --ok: #1D7A4A;
+  --warn: #C42B2B;
   --bg0:#F6EFE4;
   --bg1:#EFE4D4;
 
@@ -902,23 +904,6 @@ body::before{
   /* Boutons rapides : compacts */
   .quickRow{ margin-top: 6px !important; gap: 6px !important; }
   .miniBtn{ padding: 8px 10px !important; font-size: 13px !important; border-radius: 12px !important; }
-
-  /* 2) ✅ NUMÉROS : plus grands, plus lisibles, tappables */
-  .numbers{
-    margin-top: 6px !important;
-    gap: 8px !important;     /* espace entre touches */
-    flex: 1 !important;
-    min-height: 0 !important;
-  }
-
-  .numbers .numBtn{
-    height: 100% !important;
-    border-radius: 16px !important;
-    font-size: 18px !important;      /* ✅ plus gros */
-    font-weight: 950 !important;
-    letter-spacing: .2px !important;
-    box-shadow: 0 10px 18px rgba(23,21,19,.10) !important;
-  }
 
   /* Astuce ergonomie : sensation de “clavier” */
   .numbers .numBtn:active{
@@ -1929,6 +1914,7 @@ body::before{
   </script>
 </body>
 </html>
+
 
 
 
