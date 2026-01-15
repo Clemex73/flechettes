@@ -85,10 +85,13 @@ body::before{
 
   background-image: url("icon-192.png");
   background-repeat: no-repeat;
-  background-position: center 120px; /* ajuste si besoin */
+
+  /* Desktop: un peu plus haut */
+  background-position: center 130px;
   background-size: min(520px, 78vw);
-  opacity: .10; /* intensité */
-  filter: saturate(.95) contrast(1.02);
+
+  opacity: .14; /* un peu plus visible */
+  filter: saturate(.95) contrast(1.03);
 }
 
 /* Assure que le contenu passe au-dessus */
@@ -783,6 +786,17 @@ button:disabled{
   .cHeaderCell{ padding: 7px 5px; font-size: 11px; }
 
   .mobilePlayers, .tabs, .mobilePanels { display:flex; }
+  
+  body::before{
+    background-position: center 95px;     /* le logo derrière le header */
+    background-size: min(360px, 86vw);   /* un peu plus gros */
+    opacity: .18;                        /* plus visible */
+  }
+
+  /* On descend la carte "setup" pour laisser voir le logo */
+  #setup{
+    margin-top: 90px;  /* ✅ augmente/diminue (70 à 120) selon ton goût */
+  }
 }
 
 /* Mobile-only elements hidden on desktop */
@@ -1728,6 +1742,7 @@ button:disabled{
 
 </body>
 </html>
+
 
 
 
