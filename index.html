@@ -438,13 +438,8 @@
       color: var(--ink);
     }
 
-    .applyRow{
-      flex: 0 0 auto;
-    }
-    #applyBtn{
-      min-height: 44px;
-      font-size: 14px;
-    }
+    /* ✅ bouton valider caché (score immédiat) */
+    .applyRow{ display:none; }
 
     /* Cricket fixed: if too long, we shrink text instead of scrolling */
     .cricketWrap{
@@ -669,7 +664,7 @@
 
       <div class="turnBanner">
         <b id="turnLabel">—</b>
-        <span class="muted" id="smallHint">Entrée=Valider • ⌫=Retour • Esc=Effacer</span>
+        <span class="muted" id="smallHint">⌫=Retour • Esc=Effacer • Annuler=Undo</span>
       </div>
 
       <!-- Tabs -->
@@ -809,7 +804,7 @@
   const panelCricket = $("panelCricket");
   const panelHistory = $("panelHistory");
 
-  const STORAGE_KEY = "flechettes_app_state_v5_fixed_noscroll";
+  const STORAGE_KEY = "flechettes_app_state_v6_fixed_noscroll_instant";
   const CRICKET_TARGETS = [20,19,18,17,16,15,"B"];
   const BULL_POINTS_PER_MARK = 25;
 
@@ -875,17 +870,33 @@
     return st;
   }
 
-  function saveState() { if (state) localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  function saveState() {
+    if (!state) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, mobileView }));
+  }
+
   function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    try { return JSON.parse(raw); } catch { return null; }
+    try {
+      const obj = JSON.parse(raw);
+      if (obj && obj.mobileView) mobileView = obj.mobileView;
+      delete obj.mobileView;
+      return obj;
+    } catch {
+      return null;
+    }
   }
 
   function showSetup(){ setupEl.style.display="block"; gameEl.style.display="none"; topBadge.textContent="Prêt"; }
   function showGame(){ setupEl.style.display="none"; gameEl.style.display="flex"; }
 
   function fmtMode(mode){ return mode === "x01" ? "X01" : (mode === "countup" ? "Count Up" : "Cricket"); }
+
+  function escapeHtml(s){
+    return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
 
   function pushUndoSnapshot(){
     state.undoStack.unshift(JSON.parse(JSON.stringify({
@@ -897,7 +908,7 @@
       mult: state.mult,
       cricket: state.cricket
     })));
-    if (state.undoStack.length > 50) state.undoStack.pop();
+    if (state.undoStack.length > 80) state.undoStack.pop();
   }
 
   function setFinished(winnerIndex){
@@ -908,11 +919,6 @@
   function nextPlayer(){
     if (state.finished) return;
     state.current = (state.current + 1) % state.players.length;
-  }
-
-  function escapeHtml(s){
-    return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
   }
 
   function setMult(m){
@@ -954,10 +960,12 @@
     sbBtn.disabled = full;
     dbBtn.disabled = full;
 
-    backBtn.disabled = darts.length === 0 || state.finished;
+    backBtn.disabled = (state.undoStack.length === 0) || state.finished;
     clearBtn.disabled = darts.length === 0 || state.finished;
 
-    applyBtn.disabled = state.finished || darts.length === 0;
+    // bouton valider inutile
+    if (applyBtn) applyBtn.disabled = true;
+
     undoBtn.disabled = state.undoStack.length === 0;
 
     const p = state.players[state.current];
@@ -965,11 +973,47 @@
     topBadge.textContent = state.finished ? "Partie terminée" : `À toi : ${p.name}`;
   }
 
+  // ✅ SCORE IMMÉDIAT : chaque dart modifie le score tout de suite (X01 / CountUp)
   function addDart(label, points, meta=null){
     if (!state || state.finished) return;
     if (state.currentDarts.length >= 3) return;
+
+    // snapshot AVANT la fléchette (pour retour)
+    pushUndoSnapshot();
+
+    const idx = state.current;
+    const p = state.players[idx];
+    const before = p.score;
+
     state.currentDarts.push({label, points, meta});
-    updateConsole(); saveState();
+
+    if (state.mode === "x01"){
+      const after = before - points;
+      if (after < 0){
+        // bust => on annule la fléchette et le snapshot
+        state.currentDarts.pop();
+        state.undoStack.shift();
+        updateConsole(); saveState();
+        return;
+      }
+      p.score = after;
+      if (after === 0){
+        setFinished(idx);
+      }
+    } else if (state.mode === "countup"){
+      p.score = before + points;
+    } else {
+      // Cricket: on garde le fonctionnement existant (pas d'application immédiate ici)
+    }
+
+    // auto-fin de tour à 3 fléchettes (si pas fini)
+    if (state.currentDarts.length === 3 && !state.finished){
+      p.turns += 1;
+      state.currentDarts = [];
+      nextPlayer();
+    }
+
+    render();
   }
 
   function addNumber(n){
@@ -980,16 +1024,38 @@
     addDart(`${prefix}${n}`, pts, { type:"num", n, mult:m });
   }
 
+  // ✅ Retour = annule la dernière fléchette (via snapshot)
   function backDart(){
     if (!state || state.finished) return;
-    state.currentDarts.pop();
-    updateConsole(); saveState();
+    if (state.undoStack.length === 0) return;
+    const snap = state.undoStack.shift();
+    state.players = snap.players;
+    state.current = snap.current;
+    state.finished = snap.finished;
+    state.history = snap.history;
+    state.currentDarts = snap.currentDarts || [];
+    state.mult = snap.mult || 1;
+    state.cricket = snap.cricket;
+    render();
   }
 
+  // Effacer uniquement les fléchettes du tour courant (sans toucher aux scores) :
+  // on annule autant de fois qu'il y a de fléchettes dans currentDarts
   function clearDarts(){
     if (!state || state.finished) return;
-    state.currentDarts = [];
-    updateConsole(); saveState();
+    const n = (state.currentDarts || []).length;
+    for (let i=0;i<n;i++){
+      if (state.undoStack.length === 0) break;
+      const snap = state.undoStack.shift();
+      state.players = snap.players;
+      state.current = snap.current;
+      state.finished = snap.finished;
+      state.history = snap.history;
+      state.currentDarts = snap.currentDarts || [];
+      state.mult = snap.mult || 1;
+      state.cricket = snap.cricket;
+    }
+    render();
   }
 
   function renderScoreboard(){
@@ -1018,8 +1084,6 @@
       historyEl.appendChild(empty);
       return;
     }
-
-    // ✅ pas de scroll => on affiche un nombre fixe de lignes (8 max)
     const items = state.history.slice(0,8);
     items.forEach(h => {
       const tag = h.kind === "bust" ? `<span class="bust">BUST</span>` :
@@ -1039,7 +1103,7 @@
     });
   }
 
-  // --- Cricket helpers ---
+  // --- Cricket helpers (inchangé / scoring via applyTurn si tu l'utilises encore) ---
   function markToGlyph(m){
     if (m <= 0) return "";
     if (m === 1) return "/";
@@ -1216,108 +1280,7 @@
     saveState();
   }
 
-  function applyTurn(){
-    if (!state || state.finished) return;
-
-    const idx = state.current;
-    const p = state.players[idx];
-
-    pushUndoSnapshot();
-
-    const before = p.score;
-    let after = before;
-    let kind = "ok";
-    const darts = (state.currentDarts||[]).map(d=>d.label);
-
-    if (state.mode === "x01"){
-      const val = getTotal();
-      after = before - val;
-      if (after < 0){
-        after = before;
-        kind = "bust";
-      } else {
-        p.score = after;
-        p.turns += 1;
-        if (after === 0){
-          kind = "win";
-          setFinished(idx);
-        }
-      }
-      state.history.unshift({ player:p.name, input: val, darts, before, after, kind, at: Date.now() });
-
-      state.currentDarts = [];
-      if (!state.finished){
-        if (kind !== "bust") nextPlayer();
-      }
-      render();
-      return;
-    }
-
-    if (state.mode === "countup"){
-      const val = getTotal();
-      after = before + val;
-      p.score = after;
-      p.turns += 1;
-
-      state.history.unshift({ player:p.name, input: val, darts, before, after, kind, at: Date.now() });
-
-      state.currentDarts = [];
-      nextPlayer();
-      render();
-      return;
-    }
-
-    // Cricket
-    let turnPointsGained = 0;
-
-    for (const d of (state.currentDarts||[])){
-      if (d.label === "MISS") continue;
-
-      if (d.label === "SB"){
-        const res = cricketApplyHit(idx, { targetKey: "B", marksAdded: 1, pointsPerExtraMark: BULL_POINTS_PER_MARK });
-        turnPointsGained += res.addedPoints;
-        continue;
-      }
-      if (d.label === "DB"){
-        const res = cricketApplyHit(idx, { targetKey: "B", marksAdded: 2, pointsPerExtraMark: BULL_POINTS_PER_MARK });
-        turnPointsGained += res.addedPoints;
-        continue;
-      }
-
-      if (d.meta && d.meta.type === "num"){
-        const n = d.meta.n;
-        const mult = d.meta.mult;
-        if (n < 15 || n > 20) continue;
-
-        const res = cricketApplyHit(idx, { targetKey: String(n), marksAdded: mult, pointsPerExtraMark: n });
-        turnPointsGained += res.addedPoints;
-      }
-    }
-
-    p.turns += 1;
-    after = p.score;
-
-    if (cricketCheckWin(idx)){
-      kind = "win";
-      setFinished(idx);
-    }
-
-    state.history.unshift({
-      player: p.name,
-      input: turnPointsGained,
-      darts,
-      before,
-      after,
-      kind,
-      at: Date.now()
-    });
-
-    state.currentDarts = [];
-    if (!state.finished) nextPlayer();
-
-    render();
-  }
-
+  // ✅ Annuler (Undo) : comme avant, restaure snapshot complet (pratique si tu veux remonter plusieurs actions)
   function undo(){
     if (!state || state.undoStack.length === 0) return;
     const snap = state.undoStack.shift();
@@ -1399,7 +1362,9 @@
   backBtn.addEventListener("click", backDart);
   clearBtn.addEventListener("click", clearDarts);
 
-  applyBtn.addEventListener("click", applyTurn);
+  // applyBtn inutilisé mais on le laisse sans action
+  if (applyBtn) applyBtn.addEventListener("click", (e) => e.preventDefault());
+
   undoBtn.addEventListener("click", undo);
 
   resetBtn.addEventListener("click", () => {
@@ -1421,9 +1386,9 @@
   // Keyboard shortcuts
   window.addEventListener("keydown", (e) => {
     if (!state || setupEl.style.display !== "none") return;
-    if (e.key === "Enter") { e.preventDefault(); if (!applyBtn.disabled) applyTurn(); }
     if (e.key === "Backspace") { e.preventDefault(); backDart(); }
     if (e.key === "Escape") { e.preventDefault(); clearDarts(); }
+    // Enter ne sert plus
   });
 
   // Init
@@ -1441,4 +1406,3 @@
 
 </body>
 </html>
-
