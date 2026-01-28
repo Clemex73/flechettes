@@ -1,13 +1,14 @@
 {
-  name Fléchettes – Scoreboard,
-  short_name Fléchettes,
+  "name": "CLEMEX Fléchettes",
+  "short_name": "CLEMEX",
   "start_url": "./",
-  scope .,
-  display standalone,
-  background_color #070b14,
-  theme_color #2b65ff,
-  icons [
-    { src icon-192.png, sizes 192x192, type imagepng },
-    { src icon-512.png, sizes 512x512, type imagepng }
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbf3e7",
+  "theme_color": "#141414",
+  "description": "Scoreboard fléchettes: X01, Count Up, Cricket.",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
