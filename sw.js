@@ -2,7 +2,7 @@ const CACHE_NAME = "flechettes-pwa-v1";
 
 const ASSETS = [
   "./",
-  "./index.html",,
+  "./index.html",
   "./manifest.webmanifest",
   "./sw.js",
   "./icon-192.png",
@@ -30,3 +30,4 @@ self.addEventListener("fetch", (event) => {
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
+
