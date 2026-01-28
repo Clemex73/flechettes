@@ -1,4 +1,4 @@
-const CACHE_NAME = "flechettes-pwa-v1"; // ⬅️ version bump OBLIGATOIRE
+const CACHE_NAME = "flechettes-pwa-v2"; // ⬅️ version bump OBLIGATOIRE
 
 const ASSETS = [
   "./",
@@ -33,5 +33,7 @@ self.addEventListener("fetch", (event) => {
     )
   );
 });
+
+
 
 
