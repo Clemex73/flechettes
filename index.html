@@ -3,588 +3,596 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>CLEMEX – Fléchettes</title>
+  <title>Fléchettes – Scoreboard</title>
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#f4efe4">
+  <meta name="theme-color" content="#121212">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="icon" type="image/png" href="icon-192.png">
 
   <style>
     :root{
-      /* ====== PALETTE LOGO (crème / noir / rouge) ====== */
-      --bg1:#fbf6eb;
-      --bg2:#f2eadc;
-      --paper:#fffaf0;
-      --paper2:#f7efe1;
+      --cream1:#fbf3e7;
+      --cream2:#f1e5d4;
+      --ink:#141414;
+      --ink2:rgba(20,20,20,.72);
+      --line:rgba(20,20,20,.14);
+      --panel:rgba(255,255,255,.70);
+      --panel2:rgba(255,255,255,.52);
+      --shadow: 0 14px 40px rgba(0,0,0,.12);
+      --radius:18px;
 
-      --ink:#151515;               /* noir doux */
-      --ink2:rgba(21,21,21,.72);   /* texte secondaire */
-      --ink3:rgba(21,21,21,.55);
+      --red:#c82924;
+      --red2:#b61f1a;
 
-      --border:rgba(21,21,21,.12);
-      --border2:rgba(21,21,21,.18);
+      --ok:#1e8e3e;
+      --warn:#b07212;
 
-      --accent:#c9151a;            /* rouge savoyard */
-      --accent2:#111111;           /* noir bouton */
-      --danger:#c9151a;
-
-      --ok:#0f8a3a;
-      --warn:#b35a00;
-
-      --radius:20px;
-      --radius2:16px;
-
-      --shadow: 0 18px 60px rgba(0,0,0,.14);
-      --shadow2: 0 10px 28px rgba(0,0,0,.10);
-
-      --glass: rgba(255,255,255,.55);
-      --glass2: rgba(255,255,255,.40);
+      --tap:44px;
     }
 
     *{box-sizing:border-box}
-    html, body{ height: 100%; }
+    html,body{height:100%}
 
     body{
       margin:0;
-      color:var(--ink);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--ink);
       background:
-        radial-gradient(900px 600px at 20% 5%, rgba(201,21,26,.12), transparent 60%),
-        radial-gradient(900px 600px at 90% 15%, rgba(21,21,21,.08), transparent 60%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+        radial-gradient(1200px 700px at 20% 0%, rgba(200,41,36,.08), transparent 55%),
+        radial-gradient(1000px 700px at 90% 15%, rgba(20,20,20,.06), transparent 60%),
+        linear-gradient(180deg, var(--cream1), var(--cream2));
+      overflow:hidden; /* ✅ aucun scroll page */
+      height: 100dvh;
     }
 
-    /* Layout */
-    .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
+    .wrap{
+      height: 100dvh;
+      max-width: 1100px;
+      margin:0 auto;
+      padding: 12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
     header{
-      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
-      margin: 8px 0 14px;
-    }
-
-    /* Brand header aligned with logo style */
-    .brand{
-      display:flex; align-items:center; gap:12px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.55);
-      border:1px solid var(--border);
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(10px);
-    }
-    .brand img{
-      width: 28px; height: 28px;
-      border-radius: 10px;
-      box-shadow: 0 8px 18px rgba(0,0,0,.10);
-    }
-    .brandText{
-      display:flex; flex-direction:column; line-height:1.05;
-    }
-    .brandText .top{
-      font-weight: 900;
-      letter-spacing: .6px;
-      font-size: 14px;
-    }
-    .brandText .sub{
-      font-weight: 800;
-      letter-spacing: 3px;
-      font-size: 10px;
-      color: var(--ink2);
-      margin-top: 3px;
-    }
-
-    /* Small savoy cross badge (red square + white cross) */
-    .savoy{
-      width: 22px; height: 22px;
-      border-radius: 7px;
-      background: var(--accent);
-      box-shadow: 0 10px 18px rgba(201,21,26,.18);
-      position: relative;
-      border: 1px solid rgba(0,0,0,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
       flex: 0 0 auto;
     }
-    .savoy::before, .savoy::after{
-      content:"";
-      position:absolute;
-      background: #fff;
-      border-radius: 2px;
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 0;
     }
-    .savoy::before{ /* vertical bar */
-      width: 4px; height: 14px;
-      left: 50%; top: 50%;
-      transform: translate(-50%,-50%);
+    .brand img{
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.10);
     }
-    .savoy::after{ /* horizontal bar */
-      height: 4px; width: 14px;
-      left: 50%; top: 50%;
-      transform: translate(-50%,-50%);
+    header h1{
+      margin:0;
+      font-size: 16px;
+      letter-spacing: .2px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 60vw;
     }
 
     .badge{
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 10px 12px; border-radius: 999px;
-      border:1px solid var(--border);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border:1px solid var(--line);
       background: rgba(255,255,255,.55);
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 24px rgba(0,0,0,.10);
       font-size: 12px;
       color: var(--ink2);
-      font-weight: 800;
+      white-space: nowrap;
     }
 
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.62));
-      border:1px solid var(--border);
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      border: 1px solid var(--line);
       border-radius: var(--radius);
-      padding: 14px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
+      overflow:hidden;
     }
 
-    .row{display:flex; gap:12px; flex-wrap:wrap;}
-    .col{flex: 1 1 300px;}
+    /* ---- SETUP ---- */
+    #setup{
+      padding: 12px;
+      flex: 1 1 auto;
+      min-height: 0;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      overflow:hidden; /* ✅ pas de scroll */
+    }
+
+    .row{ display:flex; gap:10px; flex-wrap:wrap; }
+    .col{ flex: 1 1 260px; min-width: 0; }
 
     label{
       display:block;
       font-size: 12px;
       color: var(--ink2);
-      margin: 10px 0 6px;
-      font-weight: 800;
-      letter-spacing: .2px;
+      margin: 8px 0 6px;
+      font-weight: 700;
     }
 
     select,input,button{
       width:100%;
       padding: 11px 12px;
       border-radius: 14px;
-      border: 1px solid var(--border2);
-      background: rgba(255,255,255,.70);
+      border: 1px solid rgba(20,20,20,.16);
+      background: rgba(255,255,255,.72);
       color: var(--ink);
       outline:none;
-      box-shadow: 0 6px 18px rgba(0,0,0,.06);
-    }
-    select:focus, input:focus{
-      border-color: rgba(201,21,26,.38);
-      box-shadow: 0 0 0 3px rgba(201,21,26,.14), 0 10px 24px rgba(0,0,0,.08);
+      min-height: var(--tap);
     }
 
     button{
       cursor:pointer;
-      font-weight: 950;
+      font-weight: 900;
       border-color: transparent;
-      background: linear-gradient(180deg, rgba(21,21,21,1), rgba(21,21,21,.90));
+      background: linear-gradient(180deg, var(--red), var(--red2));
       color: #fff;
-      box-shadow: 0 12px 26px rgba(0,0,0,.18);
+      box-shadow: 0 12px 26px rgba(200,41,36,.22);
       transition: transform .06s ease, filter .15s ease;
     }
-    button:hover{ filter: brightness(1.04); }
+    button:hover{ filter: brightness(1.03); }
     button:active{ transform: translateY(1px); }
-
     button.secondary{
-      background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.55));
+      background: rgba(255,255,255,.60);
+      border: 1px solid rgba(20,20,20,.18);
+      box-shadow: none;
       color: var(--ink);
-      border: 1px solid var(--border2);
-      box-shadow: 0 10px 22px rgba(0,0,0,.10);
-      font-weight: 900;
+      font-weight: 850;
     }
-
     button.danger{
-      background: linear-gradient(180deg, rgba(201,21,26,1), rgba(201,21,26,.88));
-      box-shadow: 0 12px 26px rgba(201,21,26,.22);
-      color:#fff;
+      background: linear-gradient(180deg, #111, #2a2a2a);
+      box-shadow: 0 12px 26px rgba(0,0,0,.18);
+    }
+    button:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
+
+    .muted{ color: var(--ink2); font-size: 12px; }
+    .hr{ height:1px; background: rgba(20,20,20,.12); margin: 8px 0; }
+    .actionsRow{ display:flex; gap:10px; flex-wrap:wrap; }
+    .actionsRow > *{ flex: 1 1 160px; }
+
+    /* ---- GAME LAYOUT (fixed, no vertical scroll) ---- */
+    #game{
+      display:none;
+      flex: 1 1 auto;
+      min-height: 0;
+      padding: 10px;
+      overflow:hidden; /* ✅ pas de scroll */
+      display:flex;
+      flex-direction:column;
+      gap:8px;
     }
 
-    button:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
-
-    .muted{ color: var(--ink3); font-size: 12px; }
-    .hr{ height:1px; background: rgba(21,21,21,.10); margin: 12px 0; }
-
-    /* --- Desktop scoreboard (grid) --- */
-    .scoreboard{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-      margin-top: 12px;
+    .gameTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex: 0 0 auto;
     }
-    .player{
-      border-radius: var(--radius);
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.70), rgba(255,255,255,.50));
-      padding: 12px;
-      position: relative;
+
+    .miniActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:nowrap;
+      max-width: 360px;
+    }
+    .miniActions button{ width:auto; padding: 10px 12px; }
+
+    /* Players strip (horizontal only) */
+    .mobilePlayers{
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 2px;
+      flex: 0 0 auto;
+    }
+    .mobilePlayers::-webkit-scrollbar{ height: 0; }
+
+    .mpCard{
+      flex: 0 0 auto;
+      min-width: 120px;
+      border-radius: 16px;
+      border:1px solid rgba(20,20,20,.14);
+      background: rgba(255,255,255,.62);
+      padding: 8px 10px;
+    }
+    .mpCard.active{
+      border-color: rgba(200,41,36,.35);
+      background: rgba(200,41,36,.10);
+      outline: 2px solid rgba(200,41,36,.18);
+    }
+    .mpTop{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      align-items:center;
+      font-size: 11px;
+      color: var(--ink2);
+      font-weight: 800;
+    }
+    .mpName{
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
       overflow:hidden;
-      box-shadow: 0 14px 40px rgba(0,0,0,.10);
+      text-overflow: ellipsis;
+      max-width: 92px;
+      color: var(--ink);
     }
-    .player.active{
-      border-color: rgba(201,21,26,.35);
-      outline: 2px solid rgba(201,21,26,.18);
-      background: radial-gradient(700px 220px at 20% 0%, rgba(201,21,26,.10), transparent 60%),
-                  linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.55));
-    }
-    .phead{display:flex; align-items:center; justify-content:space-between; gap:10px;}
-    .phead b{font-size: 14px}
-    .status{font-size:12px; color: var(--ink2); font-weight: 800;}
-    .big{ font-size: 38px; font-weight: 950; margin: 10px 0 2px; letter-spacing:.3px; }
-    .small{ font-size: 12px; color: var(--ink3); font-weight: 700; }
-    .win{ color: var(--ok); font-weight: 950; }
-    .bust{ color: var(--warn); font-weight: 950; }
+    .mpScore{ font-size: 18px; font-weight: 980; margin-top: 4px; }
 
     .turnBanner{
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: var(--radius);
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.60);
-      box-shadow: var(--shadow2);
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-      backdrop-filter: blur(10px);
+      flex: 0 0 auto;
+      padding: 9px 10px;
+      border-radius: 16px;
+      border:1px solid rgba(20,20,20,.14);
+      background: rgba(255,255,255,.55);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
     }
-    .turnBanner b{font-size: 14px; font-weight: 950;}
-    .kbd{ font-size: 11px; color: var(--ink2); display:flex; gap:8px; flex-wrap:wrap; font-weight:800; }
-    .kbd span{ padding: 4px 8px; border-radius: 999px; border:1px solid var(--border); background: rgba(255,255,255,.55); }
+    .turnBanner b{ font-size: 13px; }
 
-    /* --- Console --- */
-    .console{
-      border-radius: var(--radius);
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.52);
-      padding: 12px;
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(10px);
+    /* Tabs fixed */
+    .tabs{
+      flex: 0 0 auto;
+      display:flex;
+      gap:6px;
+      border:1px solid rgba(20,20,20,.14);
+      background: rgba(255,255,255,.55);
+      border-radius: 999px;
+      padding: 5px;
     }
+    .tabs button{
+      width:auto;
+      flex: 1;
+      padding: 10px 8px;
+      border-radius: 999px;
+      background: transparent;
+      border:1px solid transparent;
+      box-shadow:none;
+      color: var(--ink2);
+      font-weight: 950;
+      min-height: 40px;
+    }
+    .tabs button.active{
+      background: rgba(200,41,36,.12);
+      border-color: rgba(200,41,36,.20);
+      color: var(--ink);
+    }
+
+    /* Panels: fixed height, no scroll */
+    .mobilePanels{
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .panel{
+      display:none;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow:hidden; /* ✅ aucun scroll */
+    }
+    .panel.active{ display:block; }
+
+    /* Console fixed layout inside */
+    .console{
+      height: 100%;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding: 10px;
+      overflow:hidden; /* ✅ */
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
     .readout{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-      margin-top: 8px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      flex: 0 0 auto;
     }
     .chips{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
     .chip{
-      padding: 7px 10px;
+      padding: 6px 9px;
       border-radius: 999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.62);
-      font-size: 12px;
+      border:1px solid rgba(20,20,20,.14);
+      background: rgba(255,255,255,.55);
+      font-size: 11px;
       color: var(--ink2);
-      font-weight: 900;
+      font-weight: 800;
     }
-    .chip b{ color: var(--ink); font-weight: 950; }
+    .chip b{ color: var(--ink); font-weight: 980; }
+
+    .topBtns button{
+      width:auto;
+      padding: 10px 10px;
+      min-height: 40px;
+    }
 
     .dartsRow{
+      flex: 0 0 auto;
       display:grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 10px;
+      gap: 6px;
     }
     .dartSlot{
-      border-radius: 16px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.62);
-      padding: 12px;
-      min-height: 68px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+      border-radius: 14px;
+      border:1px solid rgba(20,20,20,.14);
+      background: rgba(255,255,255,.55);
+      padding: 8px;
+      min-height: 46px;
+      display:flex; align-items:center; justify-content:space-between; gap:8px;
+      overflow:hidden;
     }
-    .dartSlot .label{ font-size: 14px; font-weight: 950; }
-    .dartSlot .pts{ font-size: 18px; font-weight: 950; }
-    .dartSlot.empty{ opacity:.62; }
+    .dartSlot .label{ font-size: 11px; font-weight: 950; }
+    .dartSlot .pts{ font-size: 13px; font-weight: 980; }
+    .dartSlot.empty{ opacity:.55; }
 
     .totalBox{
-      border-radius: 16px;
-      border:1px solid rgba(201,21,26,.22);
-      background: radial-gradient(900px 240px at 10% 0%, rgba(201,21,26,.10), transparent 60%),
-                  rgba(255,255,255,.60);
-      padding: 12px;
+      flex: 0 0 auto;
+      border-radius: 14px;
+      border:1px solid rgba(200,41,36,.22);
+      background: rgba(200,41,36,.10);
+      padding: 8px 10px;
       display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-top: 10px;
-      box-shadow: 0 12px 26px rgba(0,0,0,.10);
     }
-    .totalBox b{font-size: 14px; font-weight: 950;}
-    .totalBox .total{ font-size: 28px; font-weight: 980; }
+    .totalBox b{ font-size: 12px; }
+    .totalBox .total{ font-size: 20px; font-weight: 980; }
 
     .selector{
-      margin-top: 12px;
-      display:flex; gap:10px; flex-wrap:wrap;
+      flex: 0 0 auto;
+      display:flex; gap:8px; flex-wrap:wrap;
       align-items:center;
       justify-content:space-between;
     }
     .toggles{
-      display:flex; gap:8px;
-      background: rgba(255,255,255,.62);
-      border:1px solid var(--border);
+      display:flex; gap:6px;
+      background: rgba(255,255,255,.55);
+      border:1px solid rgba(20,20,20,.14);
       border-radius: 999px;
-      padding: 6px;
-      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+      padding: 4px;
     }
     .toggles button{
       width:auto;
-      padding: 8px 12px;
+      padding: 8px 10px;
       border-radius: 999px;
       background: transparent;
       border:1px solid transparent;
       box-shadow:none;
       font-weight: 950;
       color: var(--ink2);
+      min-height: 36px;
     }
     .toggles button.active{
-      background: rgba(201,21,26,.14);
-      border-color: rgba(201,21,26,.28);
+      background: rgba(200,41,36,.12);
+      border-color: rgba(200,41,36,.20);
       color: var(--ink);
     }
 
     .quickRow{
-      display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px;
+      flex: 0 0 auto;
+      display:flex; gap:6px; flex-wrap:wrap;
     }
     .miniBtn{
       width:auto;
-      padding: 9px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.62);
-      border:1px solid var(--border);
-      box-shadow: 0 10px 22px rgba(0,0,0,.08);
-      font-weight: 950;
+      padding: 9px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.60);
+      border:1px solid rgba(20,20,20,.16);
+      box-shadow:none;
       color: var(--ink);
+      font-weight: 950;
+      min-height: 40px;
     }
 
+    /* Numbers take remaining space (no scroll) */
     .numbers{
-      margin-top: 10px;
+      flex: 1 1 auto;
+      min-height: 0;
       display:grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 8px;
+      gap: 6px;
+      overflow:hidden; /* ✅ */
     }
     .numBtn{
-      padding: 12px 0;
-      border-radius: 16px;
-      background: rgba(255,255,255,.62);
-      border:1px solid var(--border);
-      box-shadow: 0 10px 22px rgba(0,0,0,.08);
-      font-size: 15px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.60);
+      border:1px solid rgba(20,20,20,.16);
+      box-shadow:none;
+      font-size: 13px;
       font-weight: 980;
+      padding: 0;
+      height: 100%;
+      min-height: 0;
       color: var(--ink);
     }
-    .numBtn:active{ transform: translateY(1px); }
 
-    .actionsRow{
-      display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px;
+    .applyRow{
+      flex: 0 0 auto;
     }
-    .actionsRow > *{ flex: 1 1 160px; }
-
-    /* Desktop layout grid */
-    .grid2{ display:grid; grid-template-columns: 1.12fr .88fr; gap: 12px; }
-    @media (max-width: 860px){ .grid2{ grid-template-columns: 1fr; } }
-
-    /* History */
-    .history{
-      max-height: 360px;
-      overflow:auto;
-      border-radius: var(--radius);
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.55);
-      box-shadow: 0 14px 34px rgba(0,0,0,.10);
+    #applyBtn{
+      min-height: 44px;
+      font-size: 14px;
     }
-    .hist-item{ padding:10px 12px; border-bottom:1px solid rgba(21,21,21,.10); font-size: 13px; }
-    .hist-item:last-child{ border-bottom:none; }
 
-    /* Cricket board */
-    .cricketWrap{ margin-top: 12px; }
-    .cricketTitle{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
-    .cricketLegend{ display:flex; gap:8px; flex-wrap:wrap; }
-    .cricketLegend .chip{ font-size: 11px; }
-    .cricketGrid{
-      margin-top: 10px;
-      border-radius: var(--radius);
-      border:1px solid var(--border);
+    /* Cricket fixed: if too long, we shrink text instead of scrolling */
+    .cricketWrap{
+      height:100%;
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
       overflow:hidden;
-      box-shadow: 0 14px 34px rgba(0,0,0,.10);
-      background: rgba(255,255,255,.55);
     }
-    .cRow{
-      display:grid;
-      grid-template-columns: 90px 1fr;
-      gap: 0;
-      border-bottom:1px solid rgba(21,21,21,.10);
-      background: rgba(255,255,255,.35);
-    }
-    .cRow:last-child{ border-bottom:none; }
-    .cTarget{
-      padding: 10px 12px;
-      font-weight: 980;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      border-right:1px solid rgba(21,21,21,.10);
-      background: rgba(255,255,255,.55);
-    }
-    .cCells{ display:grid; gap: 0; }
-    .cCell{
-      padding: 10px 10px;
-      border-right:1px solid rgba(21,21,21,.10);
-      display:flex; align-items:center; justify-content:center;
-      font-weight: 950;
-      color: var(--ink2);
-      background: rgba(255,255,255,.28);
-    }
-    .cCell:last-child{ border-right:none; }
-    .cCell.active{ background: rgba(201,21,26,.10); color: var(--ink); }
-    .cCell.closed{ color: var(--ok); }
-    .cCell .marks{ letter-spacing: 1px; font-size: 14px; }
-    .cTarget .openTag{
-      font-size: 10px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border:1px solid rgba(21,21,21,.12);
-      background: rgba(255,255,255,.62);
-      color: var(--ink2);
-      font-weight: 950;
-    }
-    .cTarget .openTag.allclosed{
-      border-color: rgba(15,138,58,.25);
-      background: rgba(15,138,58,.10);
-      color: var(--ok);
-    }
-    .cTarget .openTag.open{
-      border-color: rgba(201,21,26,.25);
-      background: rgba(201,21,26,.10);
-      color: var(--ink);
+    .cricketTitle{ display:flex; justify-content:space-between; gap:8px; align-items:center; flex:0 0 auto; }
+    .cricketTitle b{ font-size: 13px; }
+    .cricketGrid{
+      flex: 1 1 auto;
+      min-height: 0;
+      border-radius: 16px;
+      border:1px solid rgba(20,20,20,.14);
+      overflow:hidden;
+      background: rgba(255,255,255,.50);
+      display:flex;
+      flex-direction:column;
     }
     .cHeaderRow{
       display:grid;
-      grid-template-columns: 90px 1fr;
-      border-radius: var(--radius);
-      overflow:hidden;
-      border:1px solid var(--border);
-      margin-top: 10px;
-      box-shadow: 0 14px 34px rgba(0,0,0,.10);
+      grid-template-columns: 64px 1fr;
+      border-bottom:1px solid rgba(20,20,20,.12);
       background: rgba(255,255,255,.55);
+      flex:0 0 auto;
     }
     .cHeaderLeft{
-      padding: 10px 12px;
-      font-size: 12px;
+      padding: 8px 8px;
+      font-size: 11px;
       color: var(--ink2);
-      border-right:1px solid rgba(21,21,21,.10);
-      background: rgba(255,255,255,.62);
-      font-weight: 950;
+      border-right:1px solid rgba(20,20,20,.12);
+      font-weight: 900;
     }
-    .cHeaderRight{ display:grid; background: rgba(255,255,255,.35); }
+    .cHeaderRight{ display:grid; }
     .cHeaderCell{
-      padding: 10px 10px;
-      font-size: 12px;
+      padding: 8px 6px;
+      font-size: 11px;
       color: var(--ink2);
-      font-weight: 950;
+      font-weight: 900;
       text-align:center;
-      border-right:1px solid rgba(21,21,21,.10);
+      border-right:1px solid rgba(20,20,20,.10);
       white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
     }
     .cHeaderCell:last-child{ border-right:none; }
 
-    /* ===== Mobile UI elements ===== */
-    .mobilePlayers, .tabs, .mobilePanels { display:none; }
+    .cBody{
+      flex: 1 1 auto;
+      min-height: 0;
+      display:flex;
+      flex-direction:column;
+    }
+    .cRow{
+      display:grid;
+      grid-template-columns: 64px 1fr;
+      border-bottom:1px solid rgba(20,20,20,.10);
+      background: rgba(255,255,255,.35);
+      flex: 1 1 auto; /* each row shares available space */
+      min-height: 0;
+    }
+    .cRow:last-child{ border-bottom:none; }
+    .cTarget{
+      padding: 6px 8px;
+      font-weight: 980;
+      display:flex; align-items:center; justify-content:space-between; gap:6px;
+      border-right:1px solid rgba(20,20,20,.10);
+      background: rgba(255,255,255,.45);
+      font-size: 12px;
+    }
+    .openTag{
+      font-size: 9px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border:1px solid rgba(20,20,20,.14);
+      background: rgba(255,255,255,.55);
+      color: var(--ink2);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .openTag.open{
+      border-color: rgba(200,41,36,.22);
+      background: rgba(200,41,36,.10);
+      color: var(--ink);
+    }
+    .openTag.allclosed{
+      border-color: rgba(30,142,62,.22);
+      background: rgba(30,142,62,.10);
+      color: var(--ok);
+    }
 
-    @media (max-width: 640px){
-      /* Tu avais demandé "pas de scroll" avant. Je garde une base propre :
-         - pas de scroll vertical du body
-         - la mise en page reste compacte et “premium”
-         (si tu veux 0 scroll ABSOLU sur tous les écrans, dis-moi la taille iPhone cible et nb joueurs max affichés)
-      */
-      body{ overflow:hidden; height:100dvh; padding-top:0; padding-bottom:0; }
-      .wrap{ height:100dvh; display:flex; flex-direction:column; padding:10px; max-width:100%; }
+    .cCells{ display:grid; gap:0; }
+    .cCell{
+      padding: 6px 4px;
+      border-right:1px solid rgba(20,20,20,.08);
+      display:flex; align-items:center; justify-content:center;
+      font-weight: 950;
+      color: var(--ink2);
+      font-size: 13px;
+      min-height: 0;
+    }
+    .cCell:last-child{ border-right:none; }
+    .cCell.active{ background: rgba(200,41,36,.10); color: var(--ink); }
+    .cCell.closed{ color: var(--ok); }
+    .marks{ letter-spacing: 1px; }
 
-      header{ margin: 4px 0 8px; }
-      .brand{ padding: 8px 10px; gap:10px; }
-      .brand img{ width: 26px; height: 26px; border-radius: 9px; }
-      .brandText .top{ font-size: 13px; }
-      .brandText .sub{ font-size: 9px; letter-spacing: 2.6px; }
+    /* History fixed: show last 8 lines only (no scroll) */
+    .historyWrap{
+      height:100%;
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      overflow:hidden;
+    }
+    .historyWrap b{ font-size: 13px; }
+    .history{
+      flex: 1 1 auto;
+      min-height: 0;
+      border-radius: 16px;
+      border:1px solid rgba(20,20,20,.14);
+      background: rgba(255,255,255,.50);
+      overflow:hidden; /* ✅ */
+      display:flex;
+      flex-direction:column;
+    }
+    .hist-item{
+      padding: 8px 10px;
+      border-bottom:1px solid rgba(20,20,20,.10);
+      font-size: 12px;
+      line-height: 1.25;
+      flex: 1 1 auto;
+      min-height: 0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .hist-item:last-child{ border-bottom:none; }
 
-      #game{
-        flex:1; min-height:0;
-        display:flex; flex-direction:column;
-        overflow:hidden;
-        padding-bottom: env(safe-area-inset-bottom);
-      }
+    .win{ color: var(--ok); font-weight: 980; }
+    .bust{ color: var(--warn); font-weight: 980; }
 
-      .grid2{ display:none !important; }
-      .scoreboard{ display:none !important; }
-
-      .mobilePlayers{
-        display:flex;
-        gap:8px;
-        overflow-x:auto;
-        overflow-y:hidden;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 6px;
-        margin-top: 8px;
-      }
-      .mpCard{
-        flex: 0 0 auto;
-        min-width: 114px;
-        border-radius: 16px;
-        border:1px solid var(--border);
-        background: rgba(255,255,255,.62);
-        padding: 8px 10px;
-        box-shadow: 0 10px 22px rgba(0,0,0,.10);
-      }
-      .mpCard.active{
-        background: radial-gradient(500px 180px at 20% 0%, rgba(201,21,26,.10), transparent 60%),
-                    rgba(255,255,255,.70);
-        border-color: rgba(201,21,26,.30);
-        outline: 2px solid rgba(201,21,26,.16);
-      }
-      .mpTop{ display:flex; justify-content:space-between; gap:8px; align-items:center; font-size: 10px; color: var(--ink2); font-weight:900; }
-      .mpName{
-        font-size: 12px; font-weight: 980; color: var(--ink);
-        white-space: nowrap; overflow:hidden; text-overflow: ellipsis; max-width: 86px;
-      }
-      .mpScore{ font-size: 16px; font-weight: 980; margin-top: 3px; }
-
-      .turnBanner{ margin-top: 6px; padding: 9px 10px; }
-      .kbd{ display:none; }
-
-      .tabs{
-        display:flex;
-        gap:6px;
-        margin-top: 6px;
-        border:1px solid var(--border);
-        background: rgba(255,255,255,.62);
-        border-radius: 999px;
-        padding: 5px;
-        box-shadow: 0 10px 22px rgba(0,0,0,.10);
-      }
-      .tabs button{
-        width:auto;
-        flex: 1;
-        padding: 8px 8px;
-        border-radius: 999px;
-        background: transparent;
-        border:1px solid transparent;
-        box-shadow:none;
-        color: var(--ink2);
-        font-weight: 980;
-        font-size: 12px;
-      }
-      .tabs button.active{
-        background: rgba(201,21,26,.12);
-        border-color: rgba(201,21,26,.22);
-        color: var(--ink);
-      }
-
-      .mobilePanels{
-        display:flex;
-        flex-direction: column;
-        flex: 1;
-        min-height: 0;
-        overflow:hidden;
-        margin-top: 6px;
-      }
-      .panel{
-        display:none;
-        flex: 1;
-        min-height: 0;
-        overflow:auto; /* (si tu veux absolument 0 scroll, on pourra forcer overflow:hidden ici) */
-      }
-      .panel.active{ display:block; }
+    @media (max-width: 380px){
+      :root{ --tap: 40px; }
+      .numbers{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .mpCard{ min-width: 110px; }
     }
   </style>
 </head>
@@ -592,14 +600,10 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="brand" aria-label="CLEMEX Fléchettes">
-        <img src="icon-192.png" alt="Logo CLEMEX Fléchettes">
-        <div class="brandText">
-          <div class="top">CLEMEX <span class="savoy" aria-hidden="true" style="display:inline-block; vertical-align:middle; margin-left:6px;"></span></div>
-          <div class="sub">FLÉCHETTES</div>
-        </div>
+      <div class="brand">
+        <img src="icon-192.png" alt="CLEMEX">
+        <h1>CLEMEX Fléchettes</h1>
       </div>
-
       <div class="badge" id="topBadge">Prêt</div>
     </header>
 
@@ -631,7 +635,7 @@
             <option value="6">6</option>
           </select>
 
-          <div class="muted" style="margin-top:10px">
+          <div class="muted" style="margin-top:8px">
             S/D/T + numéro. En <b>Cricket</b>, seuls 15–20 + Bull comptent.
           </div>
         </div>
@@ -639,7 +643,7 @@
         <div class="col">
           <label>Noms des joueurs</label>
           <div id="names"></div>
-          <div class="muted" style="margin-top:10px">Vide = “Joueur 1”, etc.</div>
+          <div class="muted" style="margin-top:8px">Vide = “Joueur 1”, etc.</div>
         </div>
       </div>
 
@@ -651,111 +655,99 @@
     </div>
 
     <!-- GAME -->
-    <div id="game" class="card" style="display:none; margin-top: 14px;">
-      <div class="row" style="align-items:center; justify-content:space-between;">
+    <div id="game" class="card">
+      <div class="gameTop">
         <div class="badge" id="modeBadge">Mode</div>
-        <div class="actionsRow" style="max-width:420px;">
-          <button id="newGameBtn" class="secondary">Nouvelle partie</button>
-          <button id="resetBtn" class="danger">Réinitialiser</button>
+        <div class="miniActions">
+          <button id="newGameBtn" class="secondary">Nouvelle</button>
+          <button id="resetBtn" class="danger">Reset</button>
         </div>
       </div>
 
-      <!-- Desktop scoreboard -->
-      <div class="scoreboard" id="scoreboard"></div>
-
-      <!-- Mobile compact scoreboard -->
+      <!-- Compact players strip -->
       <div class="mobilePlayers" id="mobilePlayers"></div>
 
       <div class="turnBanner">
         <b id="turnLabel">—</b>
-        <div class="kbd">
-          <span>Entrée = Valider</span>
-          <span>Backspace = Retour</span>
-          <span>Esc = Effacer</span>
-        </div>
+        <span class="muted" id="smallHint">Entrée=Valider • ⌫=Retour • Esc=Effacer</span>
       </div>
 
-      <!-- Mobile tabs -->
-      <div class="tabs" id="tabs" role="tablist" aria-label="Vue mobile">
+      <!-- Tabs -->
+      <div class="tabs" id="tabs" role="tablist" aria-label="Vue">
         <button type="button" id="tabInput" class="active">Saisie</button>
         <button type="button" id="tabCricket">Cricket</button>
         <button type="button" id="tabHistory">Historique</button>
       </div>
 
-      <!-- Mobile panels -->
+      <!-- Panels -->
       <div class="mobilePanels" id="mobilePanels">
-        <div class="panel active" id="panelInput"></div>
-        <div class="panel" id="panelCricket"></div>
-        <div class="panel" id="panelHistory"></div>
-      </div>
-
-      <!-- Desktop layout below -->
-      <div class="grid2" id="desktopGrid">
-        <!-- CONSOLE -->
-        <div class="console" id="consoleDesktop">
-          <div class="readout">
-            <div class="chips">
-              <span class="chip">Fléchettes : <b id="dartsCount">0</b>/3</span>
-              <span class="chip">Mode tir : <b id="multLabel">S</b></span>
+        <div class="panel active" id="panelInput">
+          <!-- Console -->
+          <div class="console" id="consoleDesktop">
+            <div class="readout">
+              <div class="chips">
+                <span class="chip">Fléchettes : <b id="dartsCount">0</b>/3</span>
+                <span class="chip">Mode : <b id="multLabel">S</b></span>
+              </div>
+              <div class="chips topBtns">
+                <button id="undoBtn" class="secondary" style="width:auto">Annuler</button>
+                <button id="backBtn" class="secondary" style="width:auto">←</button>
+                <button id="clearBtn" class="secondary" style="width:auto">Effacer</button>
+              </div>
             </div>
-            <div class="chips">
-              <button id="undoBtn" class="secondary" style="width:auto">Annuler tour</button>
-              <button id="backBtn" class="secondary" style="width:auto">← Retour</button>
-              <button id="clearBtn" class="secondary" style="width:auto">Effacer</button>
+
+            <div class="dartsRow" id="dartsRow"></div>
+
+            <div class="totalBox">
+              <b>Total du tour</b>
+              <div class="total" id="turnTotal">0</div>
             </div>
-          </div>
 
-          <div class="dartsRow" id="dartsRow"></div>
-
-          <div class="totalBox">
-            <b>Total du tour</b>
-            <div class="total" id="turnTotal">0</div>
-          </div>
-
-          <div class="selector">
-            <div class="toggles" role="tablist" aria-label="Multiplicateur">
-              <button id="mS" class="active" type="button">S</button>
-              <button id="mD" type="button">D</button>
-              <button id="mT" type="button">T</button>
+            <div class="selector">
+              <div class="toggles" role="tablist" aria-label="Multiplicateur">
+                <button id="mS" class="active" type="button">S</button>
+                <button id="mD" type="button">D</button>
+                <button id="mT" type="button">T</button>
+              </div>
+              <div class="muted" id="hint">S = simple (x1)</div>
             </div>
-            <div class="muted" id="hint">S = simple (x1)</div>
-          </div>
 
-          <div class="quickRow">
-            <button class="miniBtn" id="missBtn" type="button">MISS (0)</button>
-            <button class="miniBtn" id="sbBtn" type="button">SB (25)</button>
-            <button class="miniBtn" id="dbBtn" type="button">DB (50)</button>
-          </div>
+            <div class="quickRow">
+              <button class="miniBtn" id="missBtn" type="button">MISS</button>
+              <button class="miniBtn" id="sbBtn" type="button">SB</button>
+              <button class="miniBtn" id="dbBtn" type="button">DB</button>
+            </div>
 
-          <div class="numbers" id="numbers"></div>
+            <div class="numbers" id="numbers"></div>
 
-          <div class="actionsRow">
-            <button id="applyBtn">Valider le tour</button>
-          </div>
-
-          <div class="muted" style="margin-top:10px" id="rulesNote">
-            X01 : si le total fait passer sous 0 → <b>bust</b>. Tu peux valider avec 1, 2 ou 3 fléchettes.
+            <div class="applyRow">
+              <button id="applyBtn">Valider le tour</button>
+            </div>
           </div>
         </div>
 
-        <!-- RIGHT: cricket + history -->
-        <div class="card" style="background: rgba(255,255,255,.55);" id="rightDesktop">
-          <div id="cricketBoard" class="cricketWrap" style="display:none;">
+        <div class="panel" id="panelCricket">
+          <div class="cricketWrap">
             <div class="cricketTitle">
               <b>🎯 Cible Cricket</b>
-              <div class="cricketLegend">
-                <span class="chip">Marques : <b>/</b> = 1, <b>X</b> = 2, <b>◉</b> = 3</span>
-                <span class="chip">Open = le joueur actif peut scorer</span>
-              </div>
+              <span class="muted" style="font-size:11px">15→20 + Bull</span>
             </div>
-            <div class="cHeaderRow" id="cHeaderRow"></div>
-            <div class="cricketGrid" id="cGrid"></div>
-            <div class="hr"></div>
-          </div>
 
-          <b>Historique</b>
-          <div class="muted" style="margin:6px 0 10px">Derniers tours en haut</div>
-          <div class="history" id="history"></div>
+            <div class="cricketGrid">
+              <div class="cHeaderRow" id="cHeaderRow"></div>
+              <div class="cBody" id="cGrid"></div>
+            </div>
+
+            <div class="muted" id="cricketHint" style="font-size:11px">Le mode Cricket n’est pas sélectionné.</div>
+          </div>
+        </div>
+
+        <div class="panel" id="panelHistory">
+          <div class="historyWrap">
+            <b>Historique</b>
+            <div class="muted" style="font-size:11px">Derniers tours (fixe)</div>
+            <div class="history" id="history"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -779,17 +771,14 @@
   const startBtn = $("startBtn");
   const loadBtn = $("loadBtn");
 
-  const scoreboardEl = $("scoreboard");
   const mobilePlayersEl = $("mobilePlayers");
 
   const historyEl = $("history");
   const turnLabelEl = $("turnLabel");
 
-  const cricketBoardEl = $("cricketBoard");
   const cHeaderRowEl = $("cHeaderRow");
   const cGridEl = $("cGrid");
-
-  const rulesNoteEl = $("rulesNote");
+  const cricketHintEl = $("cricketHint");
 
   const applyBtn = $("applyBtn");
   const undoBtn = $("undoBtn");
@@ -812,26 +801,20 @@
   const missBtn = $("missBtn"), sbBtn = $("sbBtn"), dbBtn = $("dbBtn");
   const numbersEl = $("numbers");
 
-  // Mobile tabs/panels
+  // Tabs/panels
   const tabInput = $("tabInput");
   const tabCricket = $("tabCricket");
   const tabHistory = $("tabHistory");
   const panelInput = $("panelInput");
   const panelCricket = $("panelCricket");
   const panelHistory = $("panelHistory");
-  const consoleDesktop = $("consoleDesktop");
-  const cricketBoardDesktop = $("cricketBoard");
 
-  const STORAGE_KEY = "flechettes_app_state_brand_skin_v1";
+  const STORAGE_KEY = "flechettes_app_state_v5_fixed_noscroll";
   const CRICKET_TARGETS = [20,19,18,17,16,15,"B"];
   const BULL_POINTS_PER_MARK = 25;
 
   let state = null;
   let mobileView = "input"; // input | cricket | history
-
-  function isMobile(){
-    return window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
-  }
 
   function renderNameInputs() {
     const n = Number(numPlayersEl.value);
@@ -899,8 +882,8 @@
     try { return JSON.parse(raw); } catch { return null; }
   }
 
-  function showSetup(){ setupEl.style.display=""; gameEl.style.display="none"; topBadge.textContent="Prêt"; }
-  function showGame(){ setupEl.style.display="none"; gameEl.style.display=""; }
+  function showSetup(){ setupEl.style.display="block"; gameEl.style.display="none"; topBadge.textContent="Prêt"; }
+  function showGame(){ setupEl.style.display="none"; gameEl.style.display="flex"; }
 
   function fmtMode(mode){ return mode === "x01" ? "X01" : (mode === "countup" ? "Count Up" : "Cricket"); }
 
@@ -956,9 +939,9 @@
       const slot = document.createElement("div");
       slot.className = "dartSlot" + (d ? "" : " empty");
       slot.innerHTML = d
-        ? `<div><div class="muted">Fléchette ${i+1}</div><div class="label">${escapeHtml(d.label)}</div></div>
+        ? `<div><div class="muted" style="font-size:10px">Fléchette ${i+1}</div><div class="label">${escapeHtml(d.label)}</div></div>
            <div class="pts">${d.points}</div>`
-        : `<div><div class="muted">Fléchette ${i+1}</div><div class="label">—</div></div>
+        : `<div><div class="muted" style="font-size:10px">Fléchette ${i+1}</div><div class="label">—</div></div>
            <div class="pts"> </div>`;
       dartsRowEl.appendChild(slot);
     }
@@ -1010,24 +993,6 @@
   }
 
   function renderScoreboard(){
-    // Desktop grid
-    scoreboardEl.innerHTML = "";
-    state.players.forEach((p, idx) => {
-      const div = document.createElement("div");
-      div.className = "player" + (idx === state.current ? " active" : "");
-      const status = p.isWinner ? `<span class="win">GAGNANT</span>` : (state.finished ? `<span class="status">Terminé</span>` : `<span class="status">Tour #${p.turns + 1}</span>`);
-      div.innerHTML = `
-        <div class="phead">
-          <b>${escapeHtml(p.name)}</b>
-          ${status}
-        </div>
-        <div class="big">${p.score}</div>
-        <div class="small">Tours joués : ${p.turns}</div>
-      `;
-      scoreboardEl.appendChild(div);
-    });
-
-    // Mobile top strip
     mobilePlayersEl.innerHTML = "";
     state.players.forEach((p, idx) => {
       const card = document.createElement("div");
@@ -1053,15 +1018,22 @@
       historyEl.appendChild(empty);
       return;
     }
-    state.history.slice(0,40).forEach(h => {
+
+    // ✅ pas de scroll => on affiche un nombre fixe de lignes (8 max)
+    const items = state.history.slice(0,8);
+    items.forEach(h => {
       const tag = h.kind === "bust" ? `<span class="bust">BUST</span>` :
                   h.kind === "win" ? `<span class="win">WIN</span>` : `<span class="muted">OK</span>`;
       const dartsTxt = h.darts?.length ? h.darts.join(" • ") : "—";
       const item = document.createElement("div");
       item.className = "hist-item";
       item.innerHTML = `
-        <div><b>${escapeHtml(h.player)}</b> — <b>${escapeHtml(dartsTxt)}</b> → total <b>${h.input}</b> ${tag}</div>
-        <div class="muted">Avant: ${h.before} → Après: ${h.after}</div>
+        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+          <b>${escapeHtml(h.player)}</b> — <b>${escapeHtml(dartsTxt)}</b> → <b>${h.input}</b> ${tag}
+        </div>
+        <div class="muted" style="font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+          Avant: ${h.before} → Après: ${h.after}
+        </div>
       `;
       historyEl.appendChild(item);
     });
@@ -1131,11 +1103,13 @@
   }
 
   function renderCricketBoard(){
-    if (state.mode !== "cricket"){
-      cricketBoardEl.style.display = "none";
+    if (!state || state.mode !== "cricket"){
+      cricketHintEl.style.display = "";
+      cHeaderRowEl.innerHTML = "";
+      cGridEl.innerHTML = "";
       return;
     }
-    cricketBoardEl.style.display = "";
+    cricketHintEl.style.display = "none";
 
     const n = state.players.length;
 
@@ -1165,7 +1139,7 @@
       row.className = "cRow";
 
       const targetLabel = (target === "B") ? "BULL" : String(target);
-      const tag = allClosed ? `<span class="openTag allclosed">ALL CLOSED</span>` :
+      const tag = allClosed ? `<span class="openTag allclosed">ALL</span>` :
                   openForCurrent ? `<span class="openTag open">OPEN</span>` :
                   `<span class="openTag">—</span>`;
 
@@ -1211,39 +1185,6 @@
     }
   }
 
-  function syncMobilePanels(){
-    if (!isMobile()) return;
-
-    if (panelInput && consoleDesktop && consoleDesktop.parentElement !== panelInput){
-      panelInput.innerHTML = "";
-      panelInput.appendChild(consoleDesktop);
-    }
-
-    panelCricket.innerHTML = "";
-    if (state && state.mode === "cricket"){
-      panelCricket.appendChild(cricketBoardDesktop);
-    } else {
-      panelCricket.innerHTML = `<div class="muted" style="padding:10px">Le mode Cricket n’est pas sélectionné.</div>`;
-    }
-
-    panelHistory.innerHTML = "";
-    const historyBlock = document.createElement("div");
-    historyBlock.className = "card";
-    historyBlock.style.background = "rgba(255,255,255,.55)";
-    historyBlock.style.height = "100%";
-    historyBlock.style.display = "flex";
-    historyBlock.style.flexDirection = "column";
-    historyBlock.innerHTML = `
-      <b>Historique</b>
-      <div class="muted" style="margin:6px 0 10px">Derniers tours en haut</div>
-    `;
-    const h = historyEl;
-    h.style.height = "100%";
-    h.style.maxHeight = "none";
-    historyBlock.appendChild(h);
-    panelHistory.appendChild(historyBlock);
-  }
-
   function setMobileView(view){
     mobileView = view;
 
@@ -1264,26 +1205,13 @@
     renderScoreboard();
 
     const p = state.players[state.current];
-    turnLabelEl.textContent = state.finished ? "Partie terminée" : `🎯 ${p.name}, à toi de jouer !`;
+    turnLabelEl.textContent = state.finished ? "Partie terminée" : `🎯 ${p.name}, à toi !`;
 
     renderCricketBoard();
     renderHistory();
 
     setMult(state.mult || 1);
     updateConsole();
-
-    if (state.mode === "x01"){
-      rulesNoteEl.innerHTML = `X01 : si le total fait passer sous 0 → <b>bust</b>.`;
-    } else if (state.mode === "countup"){
-      rulesNoteEl.textContent = `Count Up : addition simple.`;
-    } else {
-      rulesNoteEl.innerHTML = `Cricket : fermer à 3 marques.`;
-    }
-
-    if (isMobile()){
-      syncMobilePanels();
-      setMobileView(mobileView || "input");
-    }
 
     saveState();
   }
@@ -1441,6 +1369,7 @@
     showGame();
     buildNumbers();
     mobileView = "input";
+    setMobileView("input");
     render();
   });
 
@@ -1454,6 +1383,7 @@
     }
     showGame();
     buildNumbers();
+    setMobileView(mobileView || "input");
     render();
   });
 
@@ -1483,7 +1413,7 @@
     showSetup();
   });
 
-  // Mobile tabs
+  // Tabs
   tabInput.addEventListener("click", ()=>setMobileView("input"));
   tabCricket.addEventListener("click", ()=>setMobileView("cricket"));
   tabHistory.addEventListener("click", ()=>setMobileView("history"));
@@ -1496,16 +1426,13 @@
     if (e.key === "Escape") { e.preventDefault(); clearDarts(); }
   });
 
-  window.addEventListener("resize", () => { if (state) render(); });
-
-  // init
+  // Init
   renderNameInputs();
   startScoreEl.disabled = (modeEl.value !== "x01");
   showSetup();
 })();
 </script>
 
-<!-- Service Worker -->
 <script>
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./sw.js");
@@ -1514,3 +1441,4 @@
 
 </body>
 </html>
+
