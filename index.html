@@ -1347,6 +1347,10 @@ body{
       function showGame(){
         setupEl.style.display="none";
         gameEl.style.display="";
+      
+        if (isMobile()) {
+          syncMobilePanels();
+        }
       }
 
       function fmtMode(mode){
@@ -2189,6 +2193,7 @@ function downloadReport(){
   </script>
 </body>
 </html>
+
 
 
 
