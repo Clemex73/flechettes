@@ -1,1 +1,1516 @@
-<!doctype html> <html lang="fr"> <head> <meta charset="utf-8" /> <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" /> <title>CLEMEX Fléchettes – Scoreboard</title> <!-- PWA --> <link rel="manifest" href="manifest.webmanifest"> <meta name="theme-color" content="#F2E9DC"> <meta name="apple-mobile-web-app-capable" content="yes"> <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <link rel="apple-touch-icon" href="icon-192.png"> <link rel="icon" type="image/png" href="icon-192.png"> <style> /* ========================================================== CLEMEX Fléchettes – Redesign (logo-matching UI) Beige/crème + encre noire + accent rouge savoyard ========================================================== */ :root{ /* Palette */ --bg0:#F6EFE4; --bg1:#EFE4D4; --paper: rgba(255,255,255,.55); --paper2: rgba(255,255,255,.38); --ink:#171513; --ink2: rgba(23,21,19,.72); --ink3: rgba(23,21,19,.52); --line: rgba(23,21,19,.10); --line2: rgba(23,21,19,.14); --accent:#C42B2B; --accentDeep:#9A1F1F; --accentSoft: rgba(196,43,43,.14); --ok:#1D7A4A; --warn:#B36A2E; --r18:18px; --r16:16px; --r14:14px; --shadow: 0 18px 50px rgba(23,21,19,.14); --shadow2: 0 10px 22px rgba(23,21,19,.10); --blur: blur(10px); --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; } *{ box-sizing:border-box; } html, body{ height:100%; } body{ margin:0; font-family: var(--font); color: var(--ink); background: radial-gradient(900px 700px at 12% 0%, rgba(196,43,43,.10), transparent 60%), radial-gradient(900px 700px at 90% 12%, rgba(23,21,19,.08), transparent 58%), linear-gradient(180deg, var(--bg0), var(--bg1)); padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); } /* Watermark (logo) – visible mais premium */ body::before{ content:""; position: fixed; inset: 0; pointer-events: none; z-index: 0; background-image: url("icon-192.png"); background-repeat: no-repeat; background-position: center 34vh; /* 👈 centre “présentation” */ background-size: min(460px, 82vw); opacity: .18; filter: saturate(1) contrast(1.05); } .wrap{ position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 16px; } /* ---------------------------------------------------------- Top bar (header) ---------------------------------------------------------- */ .topbar{ position: sticky; top: 0; z-index: 5; padding-top: env(safe-area-inset-top); margin: -16px -16px 14px; padding: 12px 16px 10px; background: linear-gradient(180deg, rgba(246,239,228,.78), rgba(246,239,228,.45)); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border-bottom: 1px solid rgba(23,21,19,.06); } .brandRow{ display:flex; align-items:center; justify-content:space-between; gap: 12px; } .brand{ display:flex; align-items:center; gap:10px; min-width: 0; } .brand img{ width: 28px; height: 28px; border-radius: 9px; box-shadow: 0 10px 20px rgba(23,21,19,.14); flex: 0 0 auto; } .brand h1{ margin:0; font-size: 16px; letter-spacing:.2px; font-weight: 900; white-space: nowrap; overflow:hidden; text-overflow: ellipsis; } .pill{ display:inline-flex; align-items:center; gap:8px; padding: 8px 12px; border-radius: 999px; border:1px solid var(--line); background: rgba(255,255,255,.40); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); box-shadow: var(--shadow2); font-size: 12px; color: var(--ink2); white-space: nowrap; } /* ---------------------------------------------------------- Surfaces / cards / text ---------------------------------------------------------- */ .card{ border-radius: var(--r18); border:1px solid rgba(23,21,19,.10); background: var(--paper); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); box-shadow: var(--shadow); padding: 14px; } .subcard{ border-radius: var(--r16); border:1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.38); box-shadow: var(--shadow2); padding: 12px; } .row{ display:flex; gap:12px; flex-wrap:wrap; } .col{ flex: 1 1 320px; min-width: 280px; } .muted{ color: var(--ink3); font-size: 12px; } .hr{ height:1px; background: rgba(23,21,19,.10); margin: 12px 0; } label{ display:block; font-size: 12px; color: var(--ink2); margin: 10px 0 6px; font-weight: 800; letter-spacing: .2px; } /* ---------------------------------------------------------- Inputs ---------------------------------------------------------- */ select,input,button{ font-family: var(--font); } select, input{ width:100%; padding: 12px 12px; border-radius: var(--r16); border:1px solid rgba(23,21,19,.14); background: rgba(255,255,255,.55); color: var(--ink); outline:none; box-shadow: 0 6px 16px rgba(23,21,19,.06); } select:focus, input:focus{ border-color: rgba(196,43,43,.35); box-shadow: 0 0 0 4px rgba(196,43,43,.14), 0 10px 22px rgba(23,21,19,.08); } input::placeholder{ color: rgba(23,21,19,.35); } /* ---------------------------------------------------------- Buttons ---------------------------------------------------------- */ .actionsRow{ display:flex; gap:10px; flex-wrap:wrap; } .actionsRow > *{ flex: 1 1 180px; } button{ width:100%; padding: 12px 12px; border-radius: var(--r16); border:1px solid transparent; cursor:pointer; font-weight: 950; letter-spacing: .2px; transition: transform .06s ease, filter .15s ease, box-shadow .15s ease; user-select: none; -webkit-tap-highlight-color: transparent; } button:active{ transform: translateY(1px); } button.primary{ color: #fff; background: linear-gradient(180deg, var(--accent), var(--accentDeep)); box-shadow: 0 14px 28px rgba(196,43,43,.20); } button.primary:hover{ filter: brightness(1.03); } button.secondary{ color: var(--ink); background: rgba(255,255,255,.50); border-color: rgba(23,21,19,.14); box-shadow: 0 10px 20px rgba(23,21,19,.08); } button.danger{ color:#fff; background: linear-gradient(180deg, #C42B2B, #8D1919); box-shadow: 0 14px 28px rgba(196,43,43,.22); } button:disabled{ opacity: .55; cursor: not-allowed; box-shadow:none; transform:none; } /* ---------------------------------------------------------- Desktop scoreboard ---------------------------------------------------------- */ .scoreboard{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 12px; } .player{ border-radius: var(--r18); border: 1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.42); box-shadow: var(--shadow2); padding: 12px; position: relative; overflow:hidden; } .player.active{ border-color: rgba(196,43,43,.28); outline: 2px solid rgba(196,43,43,.16); background: linear-gradient(180deg, rgba(196,43,43,.10), rgba(255,255,255,.42)); } .phead{ display:flex; align-items:center; justify-content:space-between; gap:10px; } .phead b{ font-size: 14px; font-weight: 950; } .status{ font-size: 12px; color: var(--ink3); } .big{ font-size: 40px; font-weight: 990; margin: 10px 0 2px; } .small{ font-size: 12px; color: var(--ink3); } .win{ color: var(--ok); font-weight: 990; } .bust{ color: var(--warn); font-weight: 990; } /* ---------------------------------------------------------- Turn banner ---------------------------------------------------------- */ .turnBanner{ margin-top: 10px; padding: 12px; border-radius: var(--r18); border: 1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.42); box-shadow: var(--shadow2); display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; } .turnBanner b{ font-size: 14px; font-weight: 950; } .kbd{ font-size: 11px; color: var(--ink3); display:flex; gap:8px; flex-wrap:wrap; } .kbd span{ padding: 4px 8px; border-radius: 999px; border:1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.45); } /* ---------------------------------------------------------- Console ---------------------------------------------------------- */ .grid2{ display:grid; grid-template-columns: 1.12fr .88fr; gap: 12px; } @media (max-width: 860px){ .grid2{ grid-template-columns: 1fr; } } .console{ border-radius: var(--r18); border:1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.40); box-shadow: var(--shadow2); padding: 12px; } .readout{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-top: 8px; } .chips{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; } .chip{ padding: 7px 10px; border-radius: 999px; border:1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.45); font-size: 12px; color: var(--ink2); font-weight: 850; } .chip b{ color: var(--ink); font-weight: 990; } .chips button{ width:auto; padding: 10px 12px; border-radius: 999px; } .dartsRow{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; } .dartSlot{ border-radius: 16px; border:1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.45); padding: 12px; min-height: 70px; display:flex; align-items:center; justify-content:space-between; gap:10px; box-shadow: 0 10px 18px rgba(23,21,19,.08); } .dartSlot .label{ font-size: 14px; font-weight: 950; } .dartSlot .pts{ font-size: 18px; font-weight: 990; } .dartSlot.empty{ opacity:.55; box-shadow:none; } .totalBox{ border-radius: 16px; border:1px solid rgba(196,43,43,.22); background: rgba(196,43,43,.10); padding: 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top: 10px; box-shadow: 0 14px 24px rgba(196,43,43,.10); } .totalBox b{ font-size: 14px; font-weight: 950; } .totalBox .total{ font-size: 28px; font-weight: 999; } .selector{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; } /* Segmented control – clean */ .toggles{ display:flex; gap:6px; background: rgba(255,255,255,.45); border:1px solid rgba(23,21,19,.10); border-radius: 999px; padding: 6px; box-shadow: 0 10px 18px rgba(23,21,19,.08); } .toggles button{ width:auto; padding: 10px 14px; border-radius: 999px; background: transparent; border:1px solid transparent; box-shadow:none; font-weight: 990; color: var(--ink3); } .toggles button.active{ background: rgba(196,43,43,.14); border-color: rgba(196,43,43,.18); color: var(--ink); } .quickRow{ display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px; } .miniBtn{ width:auto; padding: 10px 12px; border-radius: 16px; background: rgba(255,255,255,.45); border:1px solid rgba(23,21,19,.10); box-shadow: 0 10px 18px rgba(23,21,19,.08); font-weight: 990; color: var(--ink); } .numbers{ margin-top: 10px; display:grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; } .numBtn{ padding: 14px 0; border-radius: 18px; background: rgba(255,255,255,.48); border:1px solid rgba(23,21,19,.10); box-shadow: 0 10px 18px rgba(23,21,19,.08); font-size: 15px; font-weight: 999; color: var(--ink); } /* Right side */ #rightDesktop.card{ background: rgba(255,255,255,.34); } /* History */ .history{ max-height: 360px; overflow:auto; border-radius: var(--r18); border:1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.40); box-shadow: 0 10px 18px rgba(23,21,19,.08); } .hist-item{ padding: 10px 12px; border-bottom: 1px solid rgba(23,21,19,.08); font-size: 13px; } .hist-item:last-child{ border-bottom:none; } /* Cricket */ .cricketWrap{ margin-top: 12px; } .cricketTitle{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; } .cricketLegend{ display:flex; gap:8px; flex-wrap:wrap; } .cricketLegend .chip{ font-size: 11px; } .cricketGrid{ margin-top: 10px; border-radius: var(--r18); border:1px solid rgba(23,21,19,.10); overflow:hidden; background: rgba(255,255,255,.40); box-shadow: 0 10px 18px rgba(23,21,19,.08); } .cRow{ display:grid; grid-template-columns: 90px 1fr; border-bottom:1px solid rgba(23,21,19,.08); background: rgba(255,255,255,.22); } .cRow:last-child{ border-bottom:none; } .cTarget{ padding: 10px 12px; font-weight: 990; display:flex; align-items:center; justify-content:space-between; gap:10px; border-right:1px solid rgba(23,21,19,.08); background: rgba(255,255,255,.36); } .cCells{ display:grid; } .cCell{ padding: 10px 10px; border-right:1px solid rgba(23,21,19,.08); display:flex; align-items:center; justify-content:center; font-weight: 990; color: var(--ink3); background: rgba(255,255,255,.18); } .cCell:last-child{ border-right:none; } .cCell.active{ background: rgba(196,43,43,.10); color: var(--ink); } .cCell.closed{ color: var(--ok); } .cCell .marks{ letter-spacing: 1px; font-size: 14px; } .openTag{ font-size: 10px; padding: 4px 8px; border-radius: 999px; border:1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.48); color: var(--ink2); font-weight: 990; } .openTag.allclosed{ border-color: rgba(29,122,74,.22); background: rgba(29,122,74,.10); color: var(--ok); } .openTag.open{ border-color: rgba(196,43,43,.22); background: rgba(196,43,43,.12); color: var(--ink); } .cHeaderRow{ display:grid; grid-template-columns: 90px 1fr; border-radius: var(--r18); overflow:hidden; border:1px solid rgba(23,21,19,.10); margin-top: 10px; background: rgba(255,255,255,.30); box-shadow: 0 10px 18px rgba(23,21,19,.08); } .cHeaderLeft{ padding: 10px 12px; font-size: 12px; color: var(--ink2); border-right:1px solid rgba(23,21,19,.08); background: rgba(255,255,255,.40); font-weight: 990; } .cHeaderRight{ display:grid; } .cHeaderCell{ padding: 10px 10px; font-size: 12px; color: var(--ink2); font-weight: 990; text-align:center; border-right:1px solid rgba(23,21,19,.08); white-space: nowrap; overflow:hidden; text-overflow: ellipsis; } .cHeaderCell:last-child{ border-right:none; } /* ---------------------------------------------------------- Mobile – NO vertical scroll (like your original) Modern spacing + better ergonomics ---------------------------------------------------------- */ /* Mobile-only elements hidden on desktop */ .mobilePlayers, .tabs, .mobilePanels { display:none; } @media (max-width: 640px){ html, body { height: 100%; } body{ overflow: hidden; height: 100dvh; padding-top: 0; padding-bottom: 0; } /* Watermark a bit bigger on mobile */ body::before{ background-position: center 38vh; background-size: min(400px, 92vw); opacity: .20; } .wrap{ max-width: 100%; height: 100dvh; padding: 10px; display:flex; flex-direction: column; } .topbar{ position: sticky; top:0; margin: -10px -10px 10px; padding: 10px 10px 8px; } .brand img{ width: 26px; height: 26px; border-radius: 8px; } .brand h1{ font-size: 15px; } /* Setup card pushed down so logo is visible */ #setup{ margin-top: 18vh; } #setup.card{ background: rgba(255,255,255,.46); } /* Game takes full height */ #game{ margin-top: 10px !important; flex: 1; min-height: 0; display:flex; flex-direction: column; overflow:hidden; padding-bottom: env(safe-area-inset-bottom); } /* Hide desktop grid on mobile */ .grid2{ display:none !important; } .scoreboard{ display:none !important; } /* Player strip */ .mobilePlayers{ display:flex; gap:8px; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling: touch; padding-bottom: 6px; margin-top: 8px; } .mpCard{ min-width: 118px; padding: 9px 10px; border-radius: 16px; border:1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.46); box-shadow: 0 10px 18px rgba(23,21,19,.10); } .mpCard.active{ border-color: rgba(196,43,43,.26); background: rgba(196,43,43,.10); } .mpTop{ font-size: 10px; color: var(--ink3); display:flex; justify-content:space-between; gap:8px; } .mpName{ font-size: 12px; max-width: 84px; color: var(--ink); font-weight: 990; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; } .mpScore{ font-size: 18px; margin-top: 4px; font-weight: 999; } /* Turn banner compact */ .turnBanner{ display:none !important; } /* Tabs – nicer segmented control */ .tabs{ display:flex; gap:6px; margin-top: 8px; padding: 6px; border-radius: 999px; border:1px solid rgba(23,21,19,.10); background: rgba(255,255,255,.40); box-shadow: 0 10px 18px rgba(23,21,19,.08); } .tabs button{ width: 100%; padding: 10px 8px; font-size: 13px; border-radius: 999px; background: transparent; border:1px solid transparent; color: var(--ink3); box-shadow:none; } .tabs button.active{ background: rgba(196,43,43,.14); border-color: rgba(196,43,43,.18); color: var(--ink); } /* Panels (no vertical scroll) */ .mobilePanels{ display:flex; flex-direction: column; flex: 1; min-height: 0; overflow:hidden; margin-top: 8px; } .panel{ display:none; flex: 1; min-height: 0; overflow:hidden; } .panel.active{ display:block; } /* Console fits */ .console{ padding: 10px; height: 100%; display:flex; flex-direction: column; min-height: 0; overflow:hidden; background: rgba(255,255,255,.44); } .readout{ margin-top: 0; gap:6px; } .chip{ padding: 6px 9px; font-size: 11px; } .chips button{ padding: 9px 10px; font-size: 12px; } .dartsRow{ margin-top: 8px; gap:8px; } .dartSlot{ min-height: 52px; padding: 10px; border-radius: 16px; } .dartSlot .label{ font-size: 12px; } .dartSlot .pts{ font-size: 14px; } .totalBox{ margin-top: 8px; padding: 10px 12px; border-radius: 16px; } .totalBox b{ font-size: 13px; } .totalBox .total{ font-size: 22px; } .selector{ margin-top: 8px; } .toggles{ padding: 4px; gap:6px; } .toggles button{ padding: 8px 10px; font-size: 13px; } #hint{ font-size: 11px; color: var(--ink3); } .quickRow{ margin-top: 8px; gap:8px; } .miniBtn{ padding: 10px 12px; font-size: 13px; border-radius: 16px; } /* Keypad takes remaining height */ .numbers{ margin-top: 6px; flex: 1; min-height: 0; display:grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; /* ✅ clé: hauteur stable des touches */ grid-auto-rows: 1fr; } .numbers .numBtn{ padding: 0; height: 100%; border-radius: 18px; font-size: 14px; } .actionsRow{ margin-top: 8px; gap:8px; } #applyBtn{ padding: 12px 12px; font-size: 15px; border-radius: 18px; } #rulesNote{ display:none !important; } /* Cricket + history panels: no scroll */ .history{ height: 100%; overflow:hidden; max-height: none; } .cricketLegend{ display:none; } .cricketTitle{ display:none !important; } /* enlève “Cible Cricket” */ .cHeaderRow{ margin-top: 6px !important; } .cricketGrid{ margin-top: 6px !important; } .cRow{ grid-template-columns: 60px 1fr; } .cTarget{ padding: 6px 6px; font-size: 11px; } .cCell{ padding: 6px 4px; } .cHeaderLeft{ padding: 6px 6px; font-size: 10px; } .cHeaderCell{ padding: 6px 4px; font-size: 10px; } .cCell .marks{ font-size: 13px !important; letter-spacing: .5px !important; } /* Mobile-only visible */ .mobilePlayers, .tabs, .mobilePanels { display:flex; } /* 1) On récupère de la hauteur partout */ .topbar{ margin: -10px -10px 6px !important; padding: 8px 10px 6px !important; } .brand h1{ font-size: 14px !important; } .pill{ padding: 6px 10px !important; font-size: 11px !important; } /* Carte globale un peu moins “grosse” */ .card{ padding: 10px !important; border-radius: 18px !important; } /* Zone game plus compacte */ #game{ margin-top: 8px !important; } /* Bandeau joueurs (strip) + cartes plus compactes */ .mobilePlayers{ margin-top: 6px !important; padding-bottom: 4px !important; } .mpCard{ min-width: 104px !important; padding: 6px 8px !important; border-radius: 14px !important; } .mpTop{ font-size: 10px !important; } .mpName{ font-size: 12px !important; } .mpScore{ font-size: 18px !important; } /* Turn banner plus fin */ .turnBanner{ margin-top: 6px !important; padding: 7px 9px !important; } .turnBanner b{ font-size: 12px !important; } /* Tabs plus fines */ .tabs{ margin-top: 6px !important; padding: 4px !important; gap: 6px !important; } .tabs button{ padding: 7px 8px !important; font-size: 12px !important; } /* Console compacte */ .console{ padding: 8px !important; } .readout{ gap: 6px !important; } /* Chips plus petits */ .chip{ padding: 4px 7px !important; font-size: 10px !important; } /* Boutons secondaires (Annuler/Retour/Effacer) : compacts */ #undoBtn, #backBtn, #clearBtn{ padding: 8px 10px !important; font-size: 12px !important; border-radius: 12px !important; } /* Slots fléchettes : plus petits */ .dartsRow{ margin-top: 6px !important; gap: 6px !important; } .dartSlot{ min-height: 40px !important; padding: 7px !important; border-radius: 12px !important; } .dartSlot .label{ font-size: 11px !important; } .dartSlot .pts{ font-size: 13px !important; } /* Total : plus fin */ .totalBox{ margin-top: 6px !important; padding: 8px 10px !important; border-radius: 14px !important; } .totalBox b{ font-size: 12px !important; } .totalBox .total{ font-size: 20px !important; } /* Multiplicateurs : encore plus compact */ .selector{ margin-top: 6px !important; } .toggles{ padding: 4px !important; gap: 5px !important; } .toggles button{ padding: 6px 8px !important; font-size: 12px !important; } /* Boutons rapides : compacts */ .quickRow{ margin-top: 6px !important; gap: 6px !important; } .miniBtn{ padding: 8px 10px !important; font-size: 13px !important; border-radius: 12px !important; } /* 2) ✅ NUMÉROS : plus grands, plus lisibles, tappables */ .numbers{ margin-top: 6px !important; gap: 8px !important; /* espace entre touches */ flex: 1 !important; min-height: 0 !important; } .numbers .numBtn{ height: 100% !important; border-radius: 16px !important; font-size: 18px !important; /* ✅ plus gros */ font-weight: 950 !important; letter-spacing: .2px !important; box-shadow: 0 10px 18px rgba(23,21,19,.10) !important; } /* Astuce ergonomie : sensation de “clavier” */ .numbers .numBtn:active{ transform: translateY(1px); filter: brightness(0.98); } /* 3) Bouton valider : compact mais toujours très visible */ #applyBtn{ padding: 12px 12px !important; font-size: 15px !important; border-radius: 16px !important; } /* ========================= CRICKET : faire rentrer la grille ========================= */ /* On enlève de l’air au-dessus */ #panelCricket .cricketWrap{ margin-top: 6px !important; } /* En-tête + cellules plus compactes */ .cHeaderLeft{ padding: 6px 7px !important; font-size: 10px !important; } .cHeaderCell{ padding: 6px 5px !important; font-size: 10px !important; } /* Ligne : plus basse */ .cRow{ grid-template-columns: 60px 1fr !important; } .cTarget{ padding: 6px 6px !important; font-size: 11px !important; } .cCell{ padding: 6px 4px !important; } /* Marques un poil plus compactes */ .cCell .marks{ font-size: 13px !important; letter-spacing: .5px !important; } /* Cache le titre “Cible Cricket” si tu veux gagner encore plus */ /* Décommente si nécessaire */ /* .cricketTitle{ display:none !important; } */ } </style> </head> <body> <div class="wrap"> <div class="topbar"> <div class="brandRow"> <div class="brand"> <img src="icon-192.png" alt="CLEMEX"> <h1>Fléchettes – Scoreboard</h1> </div> <div class="pill" id="topBadge">Prêt</div> </div> </div> <!-- SETUP --> <div id="setup" class="card"> <div class="row"> <div class="col"> <label>Mode de jeu</label> <select id="mode"> <option value="x01">X01 (301 / 501 / 701) – bust</option> <option value="countup">Count Up – addition</option> <option value="cricket">Cricket (20→15 + Bull)</option> </select> <label>Score de départ (X01)</label> <select id="startScore"> <option value="301">301</option> <option value="501" selected>501</option> <option value="701">701</option> </select> <label>Nombre de joueurs</label> <select id="numPlayers"> <option value="1">1</option> <option value="2" selected>2</option> <option value="3">3</option> <option value="4">4</option> <option value="5">5</option> <option value="6">6</option> </select> <div class="muted" style="margin-top:10px"> S / D / T + numéro. En <b>Cricket</b>, seuls 15–20 + Bull comptent. </div> </div> <div class="col"> <label>Noms des joueurs</label> <div id="names"></div> <div class="muted" style="margin-top:10px">Vide = “Joueur 1”, etc.</div> </div> </div> <div class="hr"></div> <div class="actionsRow"> <button id="startBtn" class="primary">Démarrer</button> <button id="loadBtn" class="secondary">Reprendre la dernière partie</button> </div> </div> <!-- GAME --> <div id="game" class="card" style="display:none; margin-top: 14px;"> <div class="row" style="align-items:center; justify-content:space-between;"> <div class="pill" id="modeBadge">Mode</div> <div class="actionsRow" style="max-width:420px;"> <button id="newGameBtn" class="secondary">Nouvelle partie</button> <button id="resetBtn" class="danger">Réinitialiser</button> </div> </div> <!-- Desktop scoreboard --> <div class="scoreboard" id="scoreboard"></div> <!-- Mobile compact scoreboard --> <div class="mobilePlayers" id="mobilePlayers"></div> <div class="turnBanner"> <b id="turnLabel">—</b> <div class="kbd"> <span>Entrée = Valider</span> <span>Backspace = Retour</span> <span>Esc = Effacer</span> </div> </div> <!-- Mobile tabs --> <div class="tabs" id="tabs" role="tablist" aria-label="Vue mobile"> <button type="button" id="tabInput" class="active">Saisie</button> <button type="button" id="tabCricket">Cricket</button> <button type="button" id="tabHistory">Historique</button> </div> <!-- Mobile panels --> <div class="mobilePanels" id="mobilePanels"> <div class="panel active" id="panelInput"></div> <div class="panel" id="panelCricket"></div> <div class="panel" id="panelHistory"></div> </div> <!-- Desktop layout below --> <div class="grid2" id="desktopGrid"> <!-- CONSOLE --> <div class="console" id="consoleDesktop"> <div class="readout"> <div class="chips"> <span class="chip">Fléchettes : <b id="dartsCount">0</b>/3</span> <span class="chip">Mode tir : <b id="multLabel">S</b></span> </div> <div class="chips"> <button id="undoBtn" class="secondary" style="width:auto">Annuler tour</button> <button id="backBtn" class="secondary" style="width:auto">← Retour</button> <button id="clearBtn" class="secondary" style="width:auto">Effacer</button> </div> </div> <div class="dartsRow" id="dartsRow"></div> <div class="totalBox"> <b>Total du tour</b> <div class="total" id="turnTotal">0</div> </div> <div class="selector"> <div class="toggles" role="tablist" aria-label="Multiplicateur"> <button id="mS" class="active" type="button">S</button> <button id="mD" type="button">D</button> <button id="mT" type="button">T</button> </div> <div class="muted" id="hint">S = simple (x1)</div> </div> <div class="quickRow"> <button class="miniBtn" id="missBtn" type="button">MISS (0)</button> <button class="miniBtn" id="sbBtn" type="button">SB (25)</button> <button class="miniBtn" id="dbBtn" type="button">DB (50)</button> </div> <div class="numbers" id="numbers"></div> <div class="actionsRow"> <button id="applyBtn" class="primary">Valider le tour</button> </div> <div class="muted" style="margin-top:10px" id="rulesNote"> X01 : si le total fait passer sous 0 → <b>bust</b>. Tu peux valider avec 1, 2 ou 3 fléchettes. </div> </div> <!-- RIGHT: cricket + history --> <div class="card" id="rightDesktop" style="padding:14px;"> <div id="cricketBoard" class="cricketWrap" style="display:none;"> <div class="cricketTitle"> <b>🎯 Cible Cricket</b> <div class="cricketLegend"> <span class="chip">Marques : <b>/</b> = 1, <b>X</b> = 2, <b>◉</b> = 3</span> <span class="chip">Open = le joueur actif peut scorer</span> </div> </div> <div class="cHeaderRow" id="cHeaderRow"></div> <div class="cricketGrid" id="cGrid"></div> <div class="hr"></div> </div> <b>Historique</b> <div class="muted" style="margin:6px 0 10px">Derniers tours en haut</div> <div class="history" id="history"></div> </div> </div> </div> </div> <script> (() => { const $ = (id) => document.getElementById(id); const setupEl = $("setup"); const gameEl = $("game"); const topBadge = $("topBadge"); const modeBadge = $("modeBadge"); const modeEl = $("mode"); const startScoreEl = $("startScore"); const numPlayersEl = $("numPlayers"); const namesWrap = $("names"); const startBtn = $("startBtn"); const loadBtn = $("loadBtn"); const scoreboardEl = $("scoreboard"); const mobilePlayersEl = $("mobilePlayers"); const historyEl = $("history"); const turnLabelEl = $("turnLabel"); const cricketBoardEl = $("cricketBoard"); const cHeaderRowEl = $("cHeaderRow"); const cGridEl = $("cGrid"); const rulesNoteEl = $("rulesNote"); const applyBtn = $("applyBtn"); const undoBtn = $("undoBtn"); const resetBtn = $("resetBtn"); const newGameBtn = $("newGameBtn"); // Dart console const dartsCountEl = $("dartsCount"); const dartsRowEl = $("dartsRow"); const turnTotalEl = $("turnTotal"); const backBtn = $("backBtn"); const clearBtn = $("clearBtn"); // Mult toggles const mS = $("mS"), mD = $("mD"), mT = $("mT"); const multLabelEl = $("multLabel"); const hintEl = $("hint"); // quick const missBtn = $("missBtn"), sbBtn = $("sbBtn"), dbBtn = $("dbBtn"); const numbersEl = $("numbers"); // Mobile tabs/panels const tabInput = $("tabInput"); const tabCricket = $("tabCricket"); const tabHistory = $("tabHistory"); const panelInput = $("panelInput"); const panelCricket = $("panelCricket"); const panelHistory = $("panelHistory"); const consoleDesktop = $("consoleDesktop"); const rightDesktop = $("rightDesktop"); const cricketBoardDesktop = $("cricketBoard"); const STORAGE_KEY = "flechettes_app_state_clemex_redesign_v1"; const CRICKET_TARGETS = [20,19,18,17,16,15,"B"]; const BULL_POINTS_PER_MARK = 25; let state = null; let mobileView = "input"; // input | cricket | history function isMobile(){ return window.matchMedia && window.matchMedia("(max-width: 640px)").matches; } function renderNameInputs() { const n = Number(numPlayersEl.value); namesWrap.innerHTML = ""; for (let i=0;i<n;i++) { const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = Joueur ${i+1}; inp.id = name_${i}; inp.style.marginBottom = "8px"; namesWrap.appendChild(inp); } } function createCricketMarks(numPlayers){ const marks = []; for (let i=0;i<numPlayers;i++){ const obj = {}; CRICKET_TARGETS.forEach(t => obj[String(t)] = 0); marks.push(obj); } return marks; } function createGameFromSetup() { const mode = modeEl.value; const n = Number(numPlayersEl.value); const startScore = Number(startScoreEl.value); const names = []; for (let i=0;i<n;i++) { const v = ($(name_${i})?.value || "").trim(); names.push(v || Joueur ${i+1}); } const players = names.map(name => ({ name, score: (mode === "x01") ? startScore : 0, turns: 0, isWinner: false })); const st = { mode, startScore, players, current: 0, finished: false, history: [], undoStack: [], currentDarts: [], mult: 1 }; if (mode === "cricket"){ st.cricket = { marks: createCricketMarks(n) }; } return st; } function saveState() { if (state) localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } function loadState() { const raw = localStorage.getItem(STORAGE_KEY); if (!raw) return null; try { return JSON.parse(raw); } catch { return null; } } function showSetup(){ setupEl.style.display=""; gameEl.style.display="none"; topBadge.textContent="Prêt"; } function showGame(){ setupEl.style.display="none"; gameEl.style.display=""; } function fmtMode(mode){ return mode === "x01" ? "X01" : (mode === "countup" ? "Count Up" : "Cricket"); } function pushUndoSnapshot(){ state.undoStack.unshift(JSON.parse(JSON.stringify({ players: state.players, current: state.current, finished: state.finished, history: state.history, currentDarts: state.currentDarts, mult: state.mult, cricket: state.cricket }))); if (state.undoStack.length > 50) state.undoStack.pop(); } function setFinished(winnerIndex){ state.finished = true; state.players.forEach((p, i) => p.isWinner = (i===winnerIndex)); } function nextPlayer(){ if (state.finished) return; state.current = (state.current + 1) % state.players.length; } function escapeHtml(s){ return String(s) .replaceAll("&","&amp;") .replaceAll("<","&lt;") .replaceAll(">","&gt;") .replaceAll('"',"&quot;") .replaceAll("'","&#039;"); } function setMult(m){ state.mult = m; mS.classList.toggle("active", m===1); mD.classList.toggle("active", m===2); mT.classList.toggle("active", m===3); multLabelEl.textContent = m===1 ? "S" : m===2 ? "D" : "T"; hintEl.textContent = m===1 ? "S = simple (x1)" : m===2 ? "D = double (x2)" : "T = triple (x3)"; saveState(); } function getTotal(){ return (state.currentDarts||[]).reduce((s,d)=>s+(d.points||0),0); } function updateConsole(){ const darts = state.currentDarts || []; dartsCountEl.textContent = darts.length; dartsRowEl.innerHTML = ""; for (let i=0;i<3;i++){ const d = darts[i]; const slot = document.createElement("div"); slot.className = "dartSlot" + (d ? "" : " empty"); slot.innerHTML = d ? <div><div class="muted">Fléchette ${i+1}</div><div class="label">${escapeHtml(d.label)}</div></div> <div class="pts">${d.points}</div> : <div><div class="muted">Fléchette ${i+1}</div><div class="label">—</div></div> <div class="pts"></div>; dartsRowEl.appendChild(slot); } turnTotalEl.textContent = getTotal(); const full = darts.length >= 3 || state.finished; numbersEl.querySelectorAll("button").forEach(b => b.disabled = full || b.dataset.disabled === "1"); missBtn.disabled = full; sbBtn.disabled = full; dbBtn.disabled = full; backBtn.disabled = darts.length === 0 || state.finished; clearBtn.disabled = darts.length === 0 || state.finished; applyBtn.disabled = state.finished || darts.length === 0; undoBtn.disabled = state.undoStack.length === 0; const p = state.players[state.current]; modeBadge.textContent = ${fmtMode(state.mode)} • ${ state.mode==="x01" ? ("Départ " + state.startScore) : (state.mode==="cricket" ? "20→15 + Bull" : "Addition") }; topBadge.textContent = state.finished ? "Partie terminée" : À toi : ${p.name}; } function addDart(label, points, meta=null){ if (!state || state.finished) return; if (state.currentDarts.length >= 3) return; state.currentDarts.push({label, points, meta}); updateConsole(); saveState(); } function addNumber(n){ const m = state.mult || 1; if (state.mode === "cricket" && n < 15) return; const pts = n * m; const prefix = m===1 ? "S" : m===2 ? "D" : "T"; addDart(${prefix}${n}, pts, { type:"num", n, mult:m }); } function backDart(){ if (!state || state.finished) return; state.currentDarts.pop(); updateConsole(); saveState(); } function clearDarts(){ if (!state || state.finished) return; state.currentDarts = []; updateConsole(); saveState(); } function renderScoreboard(){ // Desktop scoreboardEl.innerHTML = ""; state.players.forEach((p, idx) => { const div = document.createElement("div"); div.className = "player" + (idx === state.current ? " active" : ""); const status = p.isWinner ? <span class="win">GAGNANT</span> : (state.finished ? <span class="status">Terminé</span> : <span class="status">Tour #${p.turns + 1}</span>); div.innerHTML = <div class="phead"> <b>${escapeHtml(p.name)}</b> ${status} </div> <div class="big">${p.score}</div> <div class="small">Tours joués : ${p.turns}</div> ; scoreboardEl.appendChild(div); }); // Mobile strip mobilePlayersEl.innerHTML = ""; state.players.forEach((p, idx) => { const card = document.createElement("div"); card.className = "mpCard" + (idx===state.current ? " active" : ""); const st = p.isWinner ? "WIN" : (state.finished ? "END" : #${p.turns+1}); card.innerHTML = <div class="mpTop"> <div class="mpName" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div> <div>${st}</div> </div> <div class="mpScore">${p.score}</div> ; mobilePlayersEl.appendChild(card); }); } function renderHistory(){ historyEl.innerHTML = ""; if (state.history.length === 0){ const empty = document.createElement("div"); empty.className = "hist-item"; empty.innerHTML = <span class="muted">Aucun tour pour l’instant.</span>; historyEl.appendChild(empty); return; } state.history.slice(0,40).forEach(h => { const tag = h.kind === "bust" ? <span class="bust">BUST</span> : h.kind === "win" ? <span class="win">WIN</span> : <span class="muted">OK</span>; const dartsTxt = h.darts?.length ? h.darts.join(" • ") : "—"; const item = document.createElement("div"); item.className = "hist-item"; item.innerHTML = <div><b>${escapeHtml(h.player)}</b> — <b>${escapeHtml(dartsTxt)}</b> → total <b>${h.input}</b> ${tag}</div> <div class="muted">Avant: ${h.before} → Après: ${h.after}</div> ; historyEl.appendChild(item); }); } // --- Cricket helpers --- function markToGlyph(m){ if (m <= 0) return ""; if (m === 1) return "/"; if (m === 2) return "X"; return "◉"; } function isTargetAllClosed(targetKey){ const marks = state.cricket.marks; for (let i=0;i<marks.length;i++){ if ((marks[i][targetKey] || 0) < 3) return false; } return true; } function playerClosedTarget(playerIdx, targetKey){ return (state.cricket.marks[playerIdx][targetKey] || 0) >= 3; } function playerClosedAll(playerIdx){ const m = state.cricket.marks[playerIdx]; return CRICKET_TARGETS.every(t => (m[String(t)] || 0) >= 3); } function cricketApplyHit(playerIdx, hit){ const t = hit.targetKey; if (!CRICKET_TARGETS.map(String).includes(t)) return {addedMarks:0, addedPoints:0}; const marks = state.cricket.marks; const allClosed = isTargetAllClosed(t); if (allClosed) return {addedMarks:0, addedPoints:0}; const before = marks[playerIdx][t] || 0; const toAdd = hit.marksAdded; let newMarks = before + toAdd; let overflow = 0; if (newMarks > 3){ overflow = newMarks - 3; newMarks = 3; } marks[playerIdx][t] = newMarks; let points = 0; const after = marks[playerIdx][t]; const wasClosedBefore = before >= 3; const isClosedNow = after >= 3; if (wasClosedBefore){ points = toAdd * hit.pointsPerExtraMark; } else if (isClosedNow && overflow > 0){ points = overflow * hit.pointsPerExtraMark; } if (points > 0){ state.players[playerIdx].score += points; } return {addedMarks: Math.min(toAdd, 3-before), addedPoints: points}; } function cricketCheckWin(playerIdx){ if (!playerClosedAll(playerIdx)) return false; const myScore = state.players[playerIdx].score; const maxOther = Math.max(...state.players.map((p,i)=> i===playerIdx ? -Infinity : p.score)); return myScore >= maxOther; } function renderCricketBoard(){ if (state.mode !== "cricket"){ cricketBoardEl.style.display = "none"; return; } cricketBoardEl.style.display = ""; const n = state.players.length; cHeaderRowEl.innerHTML = <div class="cHeaderLeft">Cible</div> <div class="cHeaderRight" id="cHeaderRight"></div> ; const right = cHeaderRowEl.querySelector("#cHeaderRight"); right.style.gridTemplateColumns = repeat(${n}, minmax(0, 1fr)); state.players.forEach((p) => { const c = document.createElement("div"); c.className = "cHeaderCell"; c.textContent = p.name; c.title = p.name; right.appendChild(c); }); cGridEl.innerHTML = ""; CRICKET_TARGETS.forEach(target => { const key = String(target); const allClosed = isTargetAllClosed(key); const currentIdx = state.current; const currentClosed = playerClosedTarget(currentIdx, key); const openForCurrent = currentClosed && !allClosed; const row = document.createElement("div"); row.className = "cRow"; const targetLabel = (target === "B") ? "BULL" : String(target); const tag = allClosed ? <span class="openTag allclosed">ALL CLOSED</span> : openForCurrent ? <span class="openTag open">OPEN</span> : <span class="openTag">—</span>; const left = document.createElement("div"); left.className = "cTarget"; left.innerHTML = <span>${targetLabel}</span>${tag}; const cells = document.createElement("div"); cells.className = "cCells"; cells.style.gridTemplateColumns = repeat(${n}, minmax(0, 1fr)); state.players.forEach((p, idx) => { const m = state.cricket.marks[idx][key] || 0; const cell = document.createElement("div"); cell.className = "cCell" + (idx===state.current ? " active" : "") + (m>=3 ? " closed" : ""); cell.innerHTML = <span class="marks">${markToGlyph(Math.min(m,3))}</span>; cell.title = ${p.name} : ${m}/3; cells.appendChild(cell); }); row.appendChild(left); row.appendChild(cells); cGridEl.appendChild(row); }); } function buildNumbers(){ numbersEl.innerHTML = ""; for (let n=1;n<=20;n++){ const b = document.createElement("button"); b.type = "button"; b.className = "numBtn"; b.textContent = n; if (state && state.mode === "cricket" && n < 15){ b.dataset.disabled = "1"; b.disabled = true; b.style.opacity = ".35"; } b.addEventListener("click", ()=>addNumber(n)); numbersEl.appendChild(b); } } function syncMobilePanels(){ if (!isMobile()) return; // INPUT panel gets the console node if (panelInput && consoleDesktop && consoleDesktop.parentElement !== panelInput){ panelInput.innerHTML = ""; panelInput.appendChild(consoleDesktop); } // CRICKET panel panelCricket.innerHTML = ""; if (state && state.mode === "cricket"){ panelCricket.appendChild(cricketBoardDesktop); } else { panelCricket.innerHTML = <div class="muted" style="padding:10px">Le mode Cricket n’est pas sélectionné.</div>; } // HISTORY panel panelHistory.innerHTML = ""; const historyBlock = document.createElement("div"); historyBlock.className = "card"; historyBlock.style.background = "rgba(255,255,255,.44)"; historyBlock.style.height = "100%"; historyBlock.style.display = "flex"; historyBlock.style.flexDirection = "column"; historyBlock.innerHTML = <b>Historique</b> <div class="muted" style="margin:6px 0 10px">Derniers tours en haut</div> ; const h = historyEl; // reuse h.style.height = "100%"; h.style.maxHeight = "none"; historyBlock.appendChild(h); panelHistory.appendChild(historyBlock); } function setMobileView(view){ mobileView = view; tabInput.classList.toggle("active", view==="input"); tabCricket.classList.toggle("active", view==="cricket"); tabHistory.classList.toggle("active", view==="history"); panelInput.classList.toggle("active", view==="input"); panelCricket.classList.toggle("active", view==="cricket"); panelHistory.classList.toggle("active", view==="history"); saveState(); } function render(){ if (!state) return; renderScoreboard(); const p = state.players[state.current]; turnLabelEl.textContent = state.finished ? "Partie terminée" : 🎯 ${p.name}, à toi de jouer !; renderCricketBoard(); renderHistory(); setMult(state.mult || 1); updateConsole(); if (state.mode === "x01"){ rulesNoteEl.innerHTML = X01 : si le total fait passer sous 0 → <b>bust</b>.; } else if (state.mode === "countup"){ rulesNoteEl.textContent = Count Up : addition simple.; } else { rulesNoteEl.innerHTML = Cricket : fermer à 3 marques.; } if (isMobile()){ syncMobilePanels(); setMobileView(mobileView || "input"); } saveState(); } function applyTurn(){ if (!state || state.finished) return; const idx = state.current; const p = state.players[idx]; pushUndoSnapshot(); const before = p.score; let after = before; let kind = "ok"; const darts = (state.currentDarts||[]).map(d=>d.label); if (state.mode === "x01"){ const val = getTotal(); after = before - val; if (after < 0){ after = before; kind = "bust"; } else { p.score = after; p.turns += 1; if (after === 0){ kind = "win"; setFinished(idx); } } state.history.unshift({ player:p.name, input: val, darts, before, after, kind, at: Date.now() }); state.currentDarts = []; if (!state.finished){ if (kind !== "bust") nextPlayer(); } render(); return; } if (state.mode === "countup"){ const val = getTotal(); after = before + val; p.score = after; p.turns += 1; state.history.unshift({ player:p.name, input: val, darts, before, after, kind, at: Date.now() }); state.currentDarts = []; nextPlayer(); render(); return; } // Cricket let turnPointsGained = 0; for (const d of (state.currentDarts||[])){ if (d.label === "MISS") continue; if (d.label === "SB"){ const res = cricketApplyHit(idx, { targetKey: "B", marksAdded: 1, pointsPerExtraMark: BULL_POINTS_PER_MARK }); turnPointsGained += res.addedPoints; continue; } if (d.label === "DB"){ const res = cricketApplyHit(idx, { targetKey: "B", marksAdded: 2, pointsPerExtraMark: BULL_POINTS_PER_MARK }); turnPointsGained += res.addedPoints; continue; } if (d.meta && d.meta.type === "num"){ const n = d.meta.n; const mult = d.meta.mult; if (n < 15 || n > 20) continue; const res = cricketApplyHit(idx, { targetKey: String(n), marksAdded: mult, pointsPerExtraMark: n }); turnPointsGained += res.addedPoints; } } p.turns += 1; after = p.score; if (cricketCheckWin(idx)){ kind = "win"; setFinished(idx); } state.history.unshift({ player: p.name, input: turnPointsGained, darts, before, after, kind, at: Date.now() }); state.currentDarts = []; if (!state.finished) nextPlayer(); render(); } function undo(){ if (!state || state.undoStack.length === 0) return; const snap = state.undoStack.shift(); state.players = snap.players; state.current = snap.current; state.finished = snap.finished; state.history = snap.history; state.currentDarts = snap.currentDarts || []; state.mult = snap.mult || 1; state.cricket = snap.cricket; render(); } function resetGameKeepSetup(){ const mode = state.mode; const startScore = state.startScore; state.players = state.players.map(p => ({ name: p.name, score: mode === "x01" ? startScore : 0, turns: 0, isWinner: false })); state.current = 0; state.finished = false; state.history = []; state.undoStack = []; state.currentDarts = []; state.mult = 1; if (mode === "cricket"){ state.cricket = { marks: createCricketMarks(state.players.length) }; } else { delete state.cricket; } render(); } // Setup events numPlayersEl.addEventListener("change", renderNameInputs); modeEl.addEventListener("change", () => { startScoreEl.disabled = (modeEl.value !== "x01"); }); startBtn.addEventListener("click", () => { state = createGameFromSetup(); showGame(); buildNumbers(); mobileView = "input"; render(); }); loadBtn.addEventListener("click", () => { const loaded = loadState(); if (!loaded) { alert("Aucune partie sauvegardée trouvée."); return; } state = loaded; if (state.mode === "cricket" && (!state.cricket || !state.cricket.marks)){ state.cricket = { marks: createCricketMarks(state.players.length) }; } showGame(); buildNumbers(); render(); }); // Game events mS.addEventListener("click", ()=>setMult(1)); mD.addEventListener("click", ()=>setMult(2)); mT.addEventListener("click", ()=>setMult(3)); missBtn.addEventListener("click", ()=>addDart("MISS", 0, {type:"miss"})); sbBtn.addEventListener("click", ()=>addDart("SB", 25, {type:"bull", marks:1})); dbBtn.addEventListener("click", ()=>addDart("DB", 50, {type:"bull", marks:2})); backBtn.addEventListener("click", backDart); clearBtn.addEventListener("click", clearDarts); applyBtn.addEventListener("click", applyTurn); undoBtn.addEventListener("click", undo); resetBtn.addEventListener("click", () => { if (!confirm("Réinitialiser la partie ?")) return; resetGameKeepSetup(); }); newGameBtn.addEventListener("click", () => { if (!confirm("Revenir à l'écran de configuration ?")) return; state = null; showSetup(); }); // Mobile tabs tabInput.addEventListener("click", ()=>setMobileView("input")); tabCricket.addEventListener("click", ()=>setMobileView("cricket")); tabHistory.addEventListener("click", ()=>setMobileView("history")); // Keyboard shortcuts window.addEventListener("keydown", (e) => { if (!state || setupEl.style.display !== "none") return; if (e.key === "Enter") { e.preventDefault(); if (!applyBtn.disabled) applyTurn(); } if (e.key === "Backspace") { e.preventDefault(); backDart(); } if (e.key === "Escape") { e.preventDefault(); clearDarts(); } }); window.addEventListener("resize", () => { if (!state) return; render(); }); // init renderNameInputs(); startScoreEl.disabled = (modeEl.value !== "x01"); showSetup(); })(); </script> <!-- Service Worker --> <script> if ("serviceWorker" in navigator) { navigator.serviceWorker.register("./sw.js"); } </script> </body> </html>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>CLEMEX – Fléchettes</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#f4efe4">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
+
+  <style>
+    :root{
+      /* ====== PALETTE LOGO (crème / noir / rouge) ====== */
+      --bg1:#fbf6eb;
+      --bg2:#f2eadc;
+      --paper:#fffaf0;
+      --paper2:#f7efe1;
+
+      --ink:#151515;               /* noir doux */
+      --ink2:rgba(21,21,21,.72);   /* texte secondaire */
+      --ink3:rgba(21,21,21,.55);
+
+      --border:rgba(21,21,21,.12);
+      --border2:rgba(21,21,21,.18);
+
+      --accent:#c9151a;            /* rouge savoyard */
+      --accent2:#111111;           /* noir bouton */
+      --danger:#c9151a;
+
+      --ok:#0f8a3a;
+      --warn:#b35a00;
+
+      --radius:20px;
+      --radius2:16px;
+
+      --shadow: 0 18px 60px rgba(0,0,0,.14);
+      --shadow2: 0 10px 28px rgba(0,0,0,.10);
+
+      --glass: rgba(255,255,255,.55);
+      --glass2: rgba(255,255,255,.40);
+    }
+
+    *{box-sizing:border-box}
+    html, body{ height: 100%; }
+
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(900px 600px at 20% 5%, rgba(201,21,26,.12), transparent 60%),
+        radial-gradient(900px 600px at 90% 15%, rgba(21,21,21,.08), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Layout */
+    .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      margin: 8px 0 14px;
+    }
+
+    /* Brand header aligned with logo style */
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.55);
+      border:1px solid var(--border);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(10px);
+    }
+    .brand img{
+      width: 28px; height: 28px;
+      border-radius: 10px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.10);
+    }
+    .brandText{
+      display:flex; flex-direction:column; line-height:1.05;
+    }
+    .brandText .top{
+      font-weight: 900;
+      letter-spacing: .6px;
+      font-size: 14px;
+    }
+    .brandText .sub{
+      font-weight: 800;
+      letter-spacing: 3px;
+      font-size: 10px;
+      color: var(--ink2);
+      margin-top: 3px;
+    }
+
+    /* Small savoy cross badge (red square + white cross) */
+    .savoy{
+      width: 22px; height: 22px;
+      border-radius: 7px;
+      background: var(--accent);
+      box-shadow: 0 10px 18px rgba(201,21,26,.18);
+      position: relative;
+      border: 1px solid rgba(0,0,0,.10);
+      flex: 0 0 auto;
+    }
+    .savoy::before, .savoy::after{
+      content:"";
+      position:absolute;
+      background: #fff;
+      border-radius: 2px;
+    }
+    .savoy::before{ /* vertical bar */
+      width: 4px; height: 14px;
+      left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+    }
+    .savoy::after{ /* horizontal bar */
+      height: 4px; width: 14px;
+      left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+    }
+
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 10px 12px; border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.55);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      color: var(--ink2);
+      font-weight: 800;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.62));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .row{display:flex; gap:12px; flex-wrap:wrap;}
+    .col{flex: 1 1 300px;}
+
+    label{
+      display:block;
+      font-size: 12px;
+      color: var(--ink2);
+      margin: 10px 0 6px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    select,input,button{
+      width:100%;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border2);
+      background: rgba(255,255,255,.70);
+      color: var(--ink);
+      outline:none;
+      box-shadow: 0 6px 18px rgba(0,0,0,.06);
+    }
+    select:focus, input:focus{
+      border-color: rgba(201,21,26,.38);
+      box-shadow: 0 0 0 3px rgba(201,21,26,.14), 0 10px 24px rgba(0,0,0,.08);
+    }
+
+    button{
+      cursor:pointer;
+      font-weight: 950;
+      border-color: transparent;
+      background: linear-gradient(180deg, rgba(21,21,21,1), rgba(21,21,21,.90));
+      color: #fff;
+      box-shadow: 0 12px 26px rgba(0,0,0,.18);
+      transition: transform .06s ease, filter .15s ease;
+    }
+    button:hover{ filter: brightness(1.04); }
+    button:active{ transform: translateY(1px); }
+
+    button.secondary{
+      background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.55));
+      color: var(--ink);
+      border: 1px solid var(--border2);
+      box-shadow: 0 10px 22px rgba(0,0,0,.10);
+      font-weight: 900;
+    }
+
+    button.danger{
+      background: linear-gradient(180deg, rgba(201,21,26,1), rgba(201,21,26,.88));
+      box-shadow: 0 12px 26px rgba(201,21,26,.22);
+      color:#fff;
+    }
+
+    button:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+
+    .muted{ color: var(--ink3); font-size: 12px; }
+    .hr{ height:1px; background: rgba(21,21,21,.10); margin: 12px 0; }
+
+    /* --- Desktop scoreboard (grid) --- */
+    .scoreboard{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .player{
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.70), rgba(255,255,255,.50));
+      padding: 12px;
+      position: relative;
+      overflow:hidden;
+      box-shadow: 0 14px 40px rgba(0,0,0,.10);
+    }
+    .player.active{
+      border-color: rgba(201,21,26,.35);
+      outline: 2px solid rgba(201,21,26,.18);
+      background: radial-gradient(700px 220px at 20% 0%, rgba(201,21,26,.10), transparent 60%),
+                  linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.55));
+    }
+    .phead{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+    .phead b{font-size: 14px}
+    .status{font-size:12px; color: var(--ink2); font-weight: 800;}
+    .big{ font-size: 38px; font-weight: 950; margin: 10px 0 2px; letter-spacing:.3px; }
+    .small{ font-size: 12px; color: var(--ink3); font-weight: 700; }
+    .win{ color: var(--ok); font-weight: 950; }
+    .bust{ color: var(--warn); font-weight: 950; }
+
+    .turnBanner{
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.60);
+      box-shadow: var(--shadow2);
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      backdrop-filter: blur(10px);
+    }
+    .turnBanner b{font-size: 14px; font-weight: 950;}
+    .kbd{ font-size: 11px; color: var(--ink2); display:flex; gap:8px; flex-wrap:wrap; font-weight:800; }
+    .kbd span{ padding: 4px 8px; border-radius: 999px; border:1px solid var(--border); background: rgba(255,255,255,.55); }
+
+    /* --- Console --- */
+    .console{
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.52);
+      padding: 12px;
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(10px);
+    }
+    .readout{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin-top: 8px;
+    }
+    .chips{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .chip{
+      padding: 7px 10px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.62);
+      font-size: 12px;
+      color: var(--ink2);
+      font-weight: 900;
+    }
+    .chip b{ color: var(--ink); font-weight: 950; }
+
+    .dartsRow{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .dartSlot{
+      border-radius: 16px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.62);
+      padding: 12px;
+      min-height: 68px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    }
+    .dartSlot .label{ font-size: 14px; font-weight: 950; }
+    .dartSlot .pts{ font-size: 18px; font-weight: 950; }
+    .dartSlot.empty{ opacity:.62; }
+
+    .totalBox{
+      border-radius: 16px;
+      border:1px solid rgba(201,21,26,.22);
+      background: radial-gradient(900px 240px at 10% 0%, rgba(201,21,26,.10), transparent 60%),
+                  rgba(255,255,255,.60);
+      padding: 12px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-top: 10px;
+      box-shadow: 0 12px 26px rgba(0,0,0,.10);
+    }
+    .totalBox b{font-size: 14px; font-weight: 950;}
+    .totalBox .total{ font-size: 28px; font-weight: 980; }
+
+    .selector{
+      margin-top: 12px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .toggles{
+      display:flex; gap:8px;
+      background: rgba(255,255,255,.62);
+      border:1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px;
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    }
+    .toggles button{
+      width:auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: transparent;
+      border:1px solid transparent;
+      box-shadow:none;
+      font-weight: 950;
+      color: var(--ink2);
+    }
+    .toggles button.active{
+      background: rgba(201,21,26,.14);
+      border-color: rgba(201,21,26,.28);
+      color: var(--ink);
+    }
+
+    .quickRow{
+      display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px;
+    }
+    .miniBtn{
+      width:auto;
+      padding: 9px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.62);
+      border:1px solid var(--border);
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+      font-weight: 950;
+      color: var(--ink);
+    }
+
+    .numbers{
+      margin-top: 10px;
+      display:grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .numBtn{
+      padding: 12px 0;
+      border-radius: 16px;
+      background: rgba(255,255,255,.62);
+      border:1px solid var(--border);
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+      font-size: 15px;
+      font-weight: 980;
+      color: var(--ink);
+    }
+    .numBtn:active{ transform: translateY(1px); }
+
+    .actionsRow{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px;
+    }
+    .actionsRow > *{ flex: 1 1 160px; }
+
+    /* Desktop layout grid */
+    .grid2{ display:grid; grid-template-columns: 1.12fr .88fr; gap: 12px; }
+    @media (max-width: 860px){ .grid2{ grid-template-columns: 1fr; } }
+
+    /* History */
+    .history{
+      max-height: 360px;
+      overflow:auto;
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.55);
+      box-shadow: 0 14px 34px rgba(0,0,0,.10);
+    }
+    .hist-item{ padding:10px 12px; border-bottom:1px solid rgba(21,21,21,.10); font-size: 13px; }
+    .hist-item:last-child{ border-bottom:none; }
+
+    /* Cricket board */
+    .cricketWrap{ margin-top: 12px; }
+    .cricketTitle{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
+    .cricketLegend{ display:flex; gap:8px; flex-wrap:wrap; }
+    .cricketLegend .chip{ font-size: 11px; }
+    .cricketGrid{
+      margin-top: 10px;
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+      overflow:hidden;
+      box-shadow: 0 14px 34px rgba(0,0,0,.10);
+      background: rgba(255,255,255,.55);
+    }
+    .cRow{
+      display:grid;
+      grid-template-columns: 90px 1fr;
+      gap: 0;
+      border-bottom:1px solid rgba(21,21,21,.10);
+      background: rgba(255,255,255,.35);
+    }
+    .cRow:last-child{ border-bottom:none; }
+    .cTarget{
+      padding: 10px 12px;
+      font-weight: 980;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-right:1px solid rgba(21,21,21,.10);
+      background: rgba(255,255,255,.55);
+    }
+    .cCells{ display:grid; gap: 0; }
+    .cCell{
+      padding: 10px 10px;
+      border-right:1px solid rgba(21,21,21,.10);
+      display:flex; align-items:center; justify-content:center;
+      font-weight: 950;
+      color: var(--ink2);
+      background: rgba(255,255,255,.28);
+    }
+    .cCell:last-child{ border-right:none; }
+    .cCell.active{ background: rgba(201,21,26,.10); color: var(--ink); }
+    .cCell.closed{ color: var(--ok); }
+    .cCell .marks{ letter-spacing: 1px; font-size: 14px; }
+    .cTarget .openTag{
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(21,21,21,.12);
+      background: rgba(255,255,255,.62);
+      color: var(--ink2);
+      font-weight: 950;
+    }
+    .cTarget .openTag.allclosed{
+      border-color: rgba(15,138,58,.25);
+      background: rgba(15,138,58,.10);
+      color: var(--ok);
+    }
+    .cTarget .openTag.open{
+      border-color: rgba(201,21,26,.25);
+      background: rgba(201,21,26,.10);
+      color: var(--ink);
+    }
+    .cHeaderRow{
+      display:grid;
+      grid-template-columns: 90px 1fr;
+      border-radius: var(--radius);
+      overflow:hidden;
+      border:1px solid var(--border);
+      margin-top: 10px;
+      box-shadow: 0 14px 34px rgba(0,0,0,.10);
+      background: rgba(255,255,255,.55);
+    }
+    .cHeaderLeft{
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--ink2);
+      border-right:1px solid rgba(21,21,21,.10);
+      background: rgba(255,255,255,.62);
+      font-weight: 950;
+    }
+    .cHeaderRight{ display:grid; background: rgba(255,255,255,.35); }
+    .cHeaderCell{
+      padding: 10px 10px;
+      font-size: 12px;
+      color: var(--ink2);
+      font-weight: 950;
+      text-align:center;
+      border-right:1px solid rgba(21,21,21,.10);
+      white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
+    }
+    .cHeaderCell:last-child{ border-right:none; }
+
+    /* ===== Mobile UI elements ===== */
+    .mobilePlayers, .tabs, .mobilePanels { display:none; }
+
+    @media (max-width: 640px){
+      /* Tu avais demandé "pas de scroll" avant. Je garde une base propre :
+         - pas de scroll vertical du body
+         - la mise en page reste compacte et “premium”
+         (si tu veux 0 scroll ABSOLU sur tous les écrans, dis-moi la taille iPhone cible et nb joueurs max affichés)
+      */
+      body{ overflow:hidden; height:100dvh; padding-top:0; padding-bottom:0; }
+      .wrap{ height:100dvh; display:flex; flex-direction:column; padding:10px; max-width:100%; }
+
+      header{ margin: 4px 0 8px; }
+      .brand{ padding: 8px 10px; gap:10px; }
+      .brand img{ width: 26px; height: 26px; border-radius: 9px; }
+      .brandText .top{ font-size: 13px; }
+      .brandText .sub{ font-size: 9px; letter-spacing: 2.6px; }
+
+      #game{
+        flex:1; min-height:0;
+        display:flex; flex-direction:column;
+        overflow:hidden;
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      .grid2{ display:none !important; }
+      .scoreboard{ display:none !important; }
+
+      .mobilePlayers{
+        display:flex;
+        gap:8px;
+        overflow-x:auto;
+        overflow-y:hidden;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+        margin-top: 8px;
+      }
+      .mpCard{
+        flex: 0 0 auto;
+        min-width: 114px;
+        border-radius: 16px;
+        border:1px solid var(--border);
+        background: rgba(255,255,255,.62);
+        padding: 8px 10px;
+        box-shadow: 0 10px 22px rgba(0,0,0,.10);
+      }
+      .mpCard.active{
+        background: radial-gradient(500px 180px at 20% 0%, rgba(201,21,26,.10), transparent 60%),
+                    rgba(255,255,255,.70);
+        border-color: rgba(201,21,26,.30);
+        outline: 2px solid rgba(201,21,26,.16);
+      }
+      .mpTop{ display:flex; justify-content:space-between; gap:8px; align-items:center; font-size: 10px; color: var(--ink2); font-weight:900; }
+      .mpName{
+        font-size: 12px; font-weight: 980; color: var(--ink);
+        white-space: nowrap; overflow:hidden; text-overflow: ellipsis; max-width: 86px;
+      }
+      .mpScore{ font-size: 16px; font-weight: 980; margin-top: 3px; }
+
+      .turnBanner{ margin-top: 6px; padding: 9px 10px; }
+      .kbd{ display:none; }
+
+      .tabs{
+        display:flex;
+        gap:6px;
+        margin-top: 6px;
+        border:1px solid var(--border);
+        background: rgba(255,255,255,.62);
+        border-radius: 999px;
+        padding: 5px;
+        box-shadow: 0 10px 22px rgba(0,0,0,.10);
+      }
+      .tabs button{
+        width:auto;
+        flex: 1;
+        padding: 8px 8px;
+        border-radius: 999px;
+        background: transparent;
+        border:1px solid transparent;
+        box-shadow:none;
+        color: var(--ink2);
+        font-weight: 980;
+        font-size: 12px;
+      }
+      .tabs button.active{
+        background: rgba(201,21,26,.12);
+        border-color: rgba(201,21,26,.22);
+        color: var(--ink);
+      }
+
+      .mobilePanels{
+        display:flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        overflow:hidden;
+        margin-top: 6px;
+      }
+      .panel{
+        display:none;
+        flex: 1;
+        min-height: 0;
+        overflow:auto; /* (si tu veux absolument 0 scroll, on pourra forcer overflow:hidden ici) */
+      }
+      .panel.active{ display:block; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand" aria-label="CLEMEX Fléchettes">
+        <img src="icon-192.png" alt="Logo CLEMEX Fléchettes">
+        <div class="brandText">
+          <div class="top">CLEMEX <span class="savoy" aria-hidden="true" style="display:inline-block; vertical-align:middle; margin-left:6px;"></span></div>
+          <div class="sub">FLÉCHETTES</div>
+        </div>
+      </div>
+
+      <div class="badge" id="topBadge">Prêt</div>
+    </header>
+
+    <!-- SETUP -->
+    <div id="setup" class="card">
+      <div class="row">
+        <div class="col">
+          <label>Mode de jeu</label>
+          <select id="mode">
+            <option value="x01">X01 (301 / 501 / 701) – bust</option>
+            <option value="countup">Count Up – addition</option>
+            <option value="cricket">Cricket (20→15 + Bull)</option>
+          </select>
+
+          <label>Score de départ (X01)</label>
+          <select id="startScore">
+            <option value="301">301</option>
+            <option value="501" selected>501</option>
+            <option value="701">701</option>
+          </select>
+
+          <label>Nombre de joueurs</label>
+          <select id="numPlayers">
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+
+          <div class="muted" style="margin-top:10px">
+            S/D/T + numéro. En <b>Cricket</b>, seuls 15–20 + Bull comptent.
+          </div>
+        </div>
+
+        <div class="col">
+          <label>Noms des joueurs</label>
+          <div id="names"></div>
+          <div class="muted" style="margin-top:10px">Vide = “Joueur 1”, etc.</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+      <div class="actionsRow">
+        <button id="startBtn">Démarrer</button>
+        <button id="loadBtn" class="secondary">Reprendre la dernière partie</button>
+      </div>
+    </div>
+
+    <!-- GAME -->
+    <div id="game" class="card" style="display:none; margin-top: 14px;">
+      <div class="row" style="align-items:center; justify-content:space-between;">
+        <div class="badge" id="modeBadge">Mode</div>
+        <div class="actionsRow" style="max-width:420px;">
+          <button id="newGameBtn" class="secondary">Nouvelle partie</button>
+          <button id="resetBtn" class="danger">Réinitialiser</button>
+        </div>
+      </div>
+
+      <!-- Desktop scoreboard -->
+      <div class="scoreboard" id="scoreboard"></div>
+
+      <!-- Mobile compact scoreboard -->
+      <div class="mobilePlayers" id="mobilePlayers"></div>
+
+      <div class="turnBanner">
+        <b id="turnLabel">—</b>
+        <div class="kbd">
+          <span>Entrée = Valider</span>
+          <span>Backspace = Retour</span>
+          <span>Esc = Effacer</span>
+        </div>
+      </div>
+
+      <!-- Mobile tabs -->
+      <div class="tabs" id="tabs" role="tablist" aria-label="Vue mobile">
+        <button type="button" id="tabInput" class="active">Saisie</button>
+        <button type="button" id="tabCricket">Cricket</button>
+        <button type="button" id="tabHistory">Historique</button>
+      </div>
+
+      <!-- Mobile panels -->
+      <div class="mobilePanels" id="mobilePanels">
+        <div class="panel active" id="panelInput"></div>
+        <div class="panel" id="panelCricket"></div>
+        <div class="panel" id="panelHistory"></div>
+      </div>
+
+      <!-- Desktop layout below -->
+      <div class="grid2" id="desktopGrid">
+        <!-- CONSOLE -->
+        <div class="console" id="consoleDesktop">
+          <div class="readout">
+            <div class="chips">
+              <span class="chip">Fléchettes : <b id="dartsCount">0</b>/3</span>
+              <span class="chip">Mode tir : <b id="multLabel">S</b></span>
+            </div>
+            <div class="chips">
+              <button id="undoBtn" class="secondary" style="width:auto">Annuler tour</button>
+              <button id="backBtn" class="secondary" style="width:auto">← Retour</button>
+              <button id="clearBtn" class="secondary" style="width:auto">Effacer</button>
+            </div>
+          </div>
+
+          <div class="dartsRow" id="dartsRow"></div>
+
+          <div class="totalBox">
+            <b>Total du tour</b>
+            <div class="total" id="turnTotal">0</div>
+          </div>
+
+          <div class="selector">
+            <div class="toggles" role="tablist" aria-label="Multiplicateur">
+              <button id="mS" class="active" type="button">S</button>
+              <button id="mD" type="button">D</button>
+              <button id="mT" type="button">T</button>
+            </div>
+            <div class="muted" id="hint">S = simple (x1)</div>
+          </div>
+
+          <div class="quickRow">
+            <button class="miniBtn" id="missBtn" type="button">MISS (0)</button>
+            <button class="miniBtn" id="sbBtn" type="button">SB (25)</button>
+            <button class="miniBtn" id="dbBtn" type="button">DB (50)</button>
+          </div>
+
+          <div class="numbers" id="numbers"></div>
+
+          <div class="actionsRow">
+            <button id="applyBtn">Valider le tour</button>
+          </div>
+
+          <div class="muted" style="margin-top:10px" id="rulesNote">
+            X01 : si le total fait passer sous 0 → <b>bust</b>. Tu peux valider avec 1, 2 ou 3 fléchettes.
+          </div>
+        </div>
+
+        <!-- RIGHT: cricket + history -->
+        <div class="card" style="background: rgba(255,255,255,.55);" id="rightDesktop">
+          <div id="cricketBoard" class="cricketWrap" style="display:none;">
+            <div class="cricketTitle">
+              <b>🎯 Cible Cricket</b>
+              <div class="cricketLegend">
+                <span class="chip">Marques : <b>/</b> = 1, <b>X</b> = 2, <b>◉</b> = 3</span>
+                <span class="chip">Open = le joueur actif peut scorer</span>
+              </div>
+            </div>
+            <div class="cHeaderRow" id="cHeaderRow"></div>
+            <div class="cricketGrid" id="cGrid"></div>
+            <div class="hr"></div>
+          </div>
+
+          <b>Historique</b>
+          <div class="muted" style="margin:6px 0 10px">Derniers tours en haut</div>
+          <div class="history" id="history"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  const setupEl = $("setup");
+  const gameEl = $("game");
+
+  const topBadge = $("topBadge");
+  const modeBadge = $("modeBadge");
+
+  const modeEl = $("mode");
+  const startScoreEl = $("startScore");
+  const numPlayersEl = $("numPlayers");
+  const namesWrap = $("names");
+
+  const startBtn = $("startBtn");
+  const loadBtn = $("loadBtn");
+
+  const scoreboardEl = $("scoreboard");
+  const mobilePlayersEl = $("mobilePlayers");
+
+  const historyEl = $("history");
+  const turnLabelEl = $("turnLabel");
+
+  const cricketBoardEl = $("cricketBoard");
+  const cHeaderRowEl = $("cHeaderRow");
+  const cGridEl = $("cGrid");
+
+  const rulesNoteEl = $("rulesNote");
+
+  const applyBtn = $("applyBtn");
+  const undoBtn = $("undoBtn");
+  const resetBtn = $("resetBtn");
+  const newGameBtn = $("newGameBtn");
+
+  // Dart console
+  const dartsCountEl = $("dartsCount");
+  const dartsRowEl = $("dartsRow");
+  const turnTotalEl = $("turnTotal");
+  const backBtn = $("backBtn");
+  const clearBtn = $("clearBtn");
+
+  // Mult toggles
+  const mS = $("mS"), mD = $("mD"), mT = $("mT");
+  const multLabelEl = $("multLabel");
+  const hintEl = $("hint");
+
+  // quick
+  const missBtn = $("missBtn"), sbBtn = $("sbBtn"), dbBtn = $("dbBtn");
+  const numbersEl = $("numbers");
+
+  // Mobile tabs/panels
+  const tabInput = $("tabInput");
+  const tabCricket = $("tabCricket");
+  const tabHistory = $("tabHistory");
+  const panelInput = $("panelInput");
+  const panelCricket = $("panelCricket");
+  const panelHistory = $("panelHistory");
+  const consoleDesktop = $("consoleDesktop");
+  const cricketBoardDesktop = $("cricketBoard");
+
+  const STORAGE_KEY = "flechettes_app_state_brand_skin_v1";
+  const CRICKET_TARGETS = [20,19,18,17,16,15,"B"];
+  const BULL_POINTS_PER_MARK = 25;
+
+  let state = null;
+  let mobileView = "input"; // input | cricket | history
+
+  function isMobile(){
+    return window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
+  }
+
+  function renderNameInputs() {
+    const n = Number(numPlayersEl.value);
+    namesWrap.innerHTML = "";
+    for (let i=0;i<n;i++) {
+      const inp = document.createElement("input");
+      inp.type = "text";
+      inp.placeholder = `Joueur ${i+1}`;
+      inp.id = `name_${i}`;
+      inp.style.marginBottom = "8px";
+      namesWrap.appendChild(inp);
+    }
+  }
+
+  function createCricketMarks(numPlayers){
+    const marks = [];
+    for (let i=0;i<numPlayers;i++){
+      const obj = {};
+      CRICKET_TARGETS.forEach(t => obj[String(t)] = 0);
+      marks.push(obj);
+    }
+    return marks;
+  }
+
+  function createGameFromSetup() {
+    const mode = modeEl.value;
+    const n = Number(numPlayersEl.value);
+    const startScore = Number(startScoreEl.value);
+
+    const names = [];
+    for (let i=0;i<n;i++) {
+      const v = ($(`name_${i}`)?.value || "").trim();
+      names.push(v || `Joueur ${i+1}`);
+    }
+
+    const players = names.map(name => ({
+      name,
+      score: (mode === "x01") ? startScore : 0,
+      turns: 0,
+      isWinner: false
+    }));
+
+    const st = {
+      mode,
+      startScore,
+      players,
+      current: 0,
+      finished: false,
+      history: [],
+      undoStack: [],
+      currentDarts: [],
+      mult: 1
+    };
+
+    if (mode === "cricket"){
+      st.cricket = { marks: createCricketMarks(n) };
+    }
+    return st;
+  }
+
+  function saveState() { if (state) localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  function loadState() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch { return null; }
+  }
+
+  function showSetup(){ setupEl.style.display=""; gameEl.style.display="none"; topBadge.textContent="Prêt"; }
+  function showGame(){ setupEl.style.display="none"; gameEl.style.display=""; }
+
+  function fmtMode(mode){ return mode === "x01" ? "X01" : (mode === "countup" ? "Count Up" : "Cricket"); }
+
+  function pushUndoSnapshot(){
+    state.undoStack.unshift(JSON.parse(JSON.stringify({
+      players: state.players,
+      current: state.current,
+      finished: state.finished,
+      history: state.history,
+      currentDarts: state.currentDarts,
+      mult: state.mult,
+      cricket: state.cricket
+    })));
+    if (state.undoStack.length > 50) state.undoStack.pop();
+  }
+
+  function setFinished(winnerIndex){
+    state.finished = true;
+    state.players.forEach((p, i) => p.isWinner = (i===winnerIndex));
+  }
+
+  function nextPlayer(){
+    if (state.finished) return;
+    state.current = (state.current + 1) % state.players.length;
+  }
+
+  function escapeHtml(s){
+    return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+
+  function setMult(m){
+    state.mult = m;
+    mS.classList.toggle("active", m===1);
+    mD.classList.toggle("active", m===2);
+    mT.classList.toggle("active", m===3);
+    multLabelEl.textContent = m===1?"S":m===2?"D":"T";
+    hintEl.textContent = m===1?"S = simple (x1)" : m===2?"D = double (x2)" : "T = triple (x3)";
+    saveState();
+  }
+
+  function getTotal(){
+    return (state.currentDarts||[]).reduce((s,d)=>s+(d.points||0),0);
+  }
+
+  function updateConsole(){
+    const darts = state.currentDarts || [];
+    dartsCountEl.textContent = darts.length;
+
+    dartsRowEl.innerHTML = "";
+    for (let i=0;i<3;i++){
+      const d = darts[i];
+      const slot = document.createElement("div");
+      slot.className = "dartSlot" + (d ? "" : " empty");
+      slot.innerHTML = d
+        ? `<div><div class="muted">Fléchette ${i+1}</div><div class="label">${escapeHtml(d.label)}</div></div>
+           <div class="pts">${d.points}</div>`
+        : `<div><div class="muted">Fléchette ${i+1}</div><div class="label">—</div></div>
+           <div class="pts"> </div>`;
+      dartsRowEl.appendChild(slot);
+    }
+
+    turnTotalEl.textContent = getTotal();
+
+    const full = darts.length >= 3 || state.finished;
+    numbersEl.querySelectorAll("button").forEach(b => b.disabled = full || b.dataset.disabled === "1");
+    missBtn.disabled = full;
+    sbBtn.disabled = full;
+    dbBtn.disabled = full;
+
+    backBtn.disabled = darts.length === 0 || state.finished;
+    clearBtn.disabled = darts.length === 0 || state.finished;
+
+    applyBtn.disabled = state.finished || darts.length === 0;
+    undoBtn.disabled = state.undoStack.length === 0;
+
+    const p = state.players[state.current];
+    modeBadge.textContent = `${fmtMode(state.mode)} • ${state.mode==="x01" ? "Départ "+state.startScore : (state.mode==="cricket" ? "20→15 + Bull" : "Addition")}`;
+    topBadge.textContent = state.finished ? "Partie terminée" : `À toi : ${p.name}`;
+  }
+
+  function addDart(label, points, meta=null){
+    if (!state || state.finished) return;
+    if (state.currentDarts.length >= 3) return;
+    state.currentDarts.push({label, points, meta});
+    updateConsole(); saveState();
+  }
+
+  function addNumber(n){
+    const m = state.mult || 1;
+    if (state.mode === "cricket" && n < 15) return;
+    const pts = n * m;
+    const prefix = m===1?"S":m===2?"D":"T";
+    addDart(`${prefix}${n}`, pts, { type:"num", n, mult:m });
+  }
+
+  function backDart(){
+    if (!state || state.finished) return;
+    state.currentDarts.pop();
+    updateConsole(); saveState();
+  }
+
+  function clearDarts(){
+    if (!state || state.finished) return;
+    state.currentDarts = [];
+    updateConsole(); saveState();
+  }
+
+  function renderScoreboard(){
+    // Desktop grid
+    scoreboardEl.innerHTML = "";
+    state.players.forEach((p, idx) => {
+      const div = document.createElement("div");
+      div.className = "player" + (idx === state.current ? " active" : "");
+      const status = p.isWinner ? `<span class="win">GAGNANT</span>` : (state.finished ? `<span class="status">Terminé</span>` : `<span class="status">Tour #${p.turns + 1}</span>`);
+      div.innerHTML = `
+        <div class="phead">
+          <b>${escapeHtml(p.name)}</b>
+          ${status}
+        </div>
+        <div class="big">${p.score}</div>
+        <div class="small">Tours joués : ${p.turns}</div>
+      `;
+      scoreboardEl.appendChild(div);
+    });
+
+    // Mobile top strip
+    mobilePlayersEl.innerHTML = "";
+    state.players.forEach((p, idx) => {
+      const card = document.createElement("div");
+      card.className = "mpCard" + (idx===state.current ? " active" : "");
+      const st = p.isWinner ? "WIN" : (state.finished ? "END" : `#${p.turns+1}`);
+      card.innerHTML = `
+        <div class="mpTop">
+          <div class="mpName" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div>
+          <div>${st}</div>
+        </div>
+        <div class="mpScore">${p.score}</div>
+      `;
+      mobilePlayersEl.appendChild(card);
+    });
+  }
+
+  function renderHistory(){
+    historyEl.innerHTML = "";
+    if (state.history.length === 0){
+      const empty = document.createElement("div");
+      empty.className = "hist-item";
+      empty.innerHTML = `<span class="muted">Aucun tour pour l’instant.</span>`;
+      historyEl.appendChild(empty);
+      return;
+    }
+    state.history.slice(0,40).forEach(h => {
+      const tag = h.kind === "bust" ? `<span class="bust">BUST</span>` :
+                  h.kind === "win" ? `<span class="win">WIN</span>` : `<span class="muted">OK</span>`;
+      const dartsTxt = h.darts?.length ? h.darts.join(" • ") : "—";
+      const item = document.createElement("div");
+      item.className = "hist-item";
+      item.innerHTML = `
+        <div><b>${escapeHtml(h.player)}</b> — <b>${escapeHtml(dartsTxt)}</b> → total <b>${h.input}</b> ${tag}</div>
+        <div class="muted">Avant: ${h.before} → Après: ${h.after}</div>
+      `;
+      historyEl.appendChild(item);
+    });
+  }
+
+  // --- Cricket helpers ---
+  function markToGlyph(m){
+    if (m <= 0) return "";
+    if (m === 1) return "/";
+    if (m === 2) return "X";
+    return "◉";
+  }
+  function isTargetAllClosed(targetKey){
+    const marks = state.cricket.marks;
+    for (let i=0;i<marks.length;i++){
+      if ((marks[i][targetKey] || 0) < 3) return false;
+    }
+    return true;
+  }
+  function playerClosedTarget(playerIdx, targetKey){
+    return (state.cricket.marks[playerIdx][targetKey] || 0) >= 3;
+  }
+  function playerClosedAll(playerIdx){
+    const m = state.cricket.marks[playerIdx];
+    return CRICKET_TARGETS.every(t => (m[String(t)] || 0) >= 3);
+  }
+  function cricketApplyHit(playerIdx, hit){
+    const t = hit.targetKey;
+    if (!CRICKET_TARGETS.map(String).includes(t)) return {addedMarks:0, addedPoints:0};
+
+    const marks = state.cricket.marks;
+    const allClosed = isTargetAllClosed(t);
+    if (allClosed) return {addedMarks:0, addedPoints:0};
+
+    const before = marks[playerIdx][t] || 0;
+    const toAdd = hit.marksAdded;
+
+    let newMarks = before + toAdd;
+    let overflow = 0;
+    if (newMarks > 3){
+      overflow = newMarks - 3;
+      newMarks = 3;
+    }
+    marks[playerIdx][t] = newMarks;
+
+    let points = 0;
+    const after = marks[playerIdx][t];
+    const wasClosedBefore = before >= 3;
+    const isClosedNow = after >= 3;
+
+    if (wasClosedBefore){
+      points = toAdd * hit.pointsPerExtraMark;
+    } else if (isClosedNow && overflow > 0){
+      points = overflow * hit.pointsPerExtraMark;
+    }
+
+    if (points > 0){
+      state.players[playerIdx].score += points;
+    }
+    return {addedMarks: Math.min(toAdd, 3-before), addedPoints: points};
+  }
+  function cricketCheckWin(playerIdx){
+    if (!playerClosedAll(playerIdx)) return false;
+    const myScore = state.players[playerIdx].score;
+    const maxOther = Math.max(...state.players.map((p,i)=> i===playerIdx ? -Infinity : p.score));
+    return myScore >= maxOther;
+  }
+
+  function renderCricketBoard(){
+    if (state.mode !== "cricket"){
+      cricketBoardEl.style.display = "none";
+      return;
+    }
+    cricketBoardEl.style.display = "";
+
+    const n = state.players.length;
+
+    cHeaderRowEl.innerHTML = `
+      <div class="cHeaderLeft">Cible</div>
+      <div class="cHeaderRight" id="cHeaderRight"></div>
+    `;
+    const right = cHeaderRowEl.querySelector("#cHeaderRight");
+    right.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
+    state.players.forEach((p) => {
+      const c = document.createElement("div");
+      c.className = "cHeaderCell";
+      c.textContent = p.name;
+      c.title = p.name;
+      right.appendChild(c);
+    });
+
+    cGridEl.innerHTML = "";
+    CRICKET_TARGETS.forEach(target => {
+      const key = String(target);
+      const allClosed = isTargetAllClosed(key);
+      const currentIdx = state.current;
+      const currentClosed = playerClosedTarget(currentIdx, key);
+      const openForCurrent = currentClosed && !allClosed;
+
+      const row = document.createElement("div");
+      row.className = "cRow";
+
+      const targetLabel = (target === "B") ? "BULL" : String(target);
+      const tag = allClosed ? `<span class="openTag allclosed">ALL CLOSED</span>` :
+                  openForCurrent ? `<span class="openTag open">OPEN</span>` :
+                  `<span class="openTag">—</span>`;
+
+      const left = document.createElement("div");
+      left.className = "cTarget";
+      left.innerHTML = `<span>${targetLabel}</span>${tag}`;
+
+      const cells = document.createElement("div");
+      cells.className = "cCells";
+      cells.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
+
+      state.players.forEach((p, idx) => {
+        const m = state.cricket.marks[idx][key] || 0;
+        const cell = document.createElement("div");
+        cell.className = "cCell" + (idx===state.current ? " active" : "") + (m>=3 ? " closed" : "");
+        cell.innerHTML = `<span class="marks">${markToGlyph(Math.min(m,3))}</span>`;
+        cell.title = `${p.name} : ${m}/3`;
+        cells.appendChild(cell);
+      });
+
+      row.appendChild(left);
+      row.appendChild(cells);
+      cGridEl.appendChild(row);
+    });
+  }
+
+  function buildNumbers(){
+    numbersEl.innerHTML = "";
+    for (let n=1;n<=20;n++){
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "numBtn";
+      b.textContent = n;
+
+      if (state && state.mode === "cricket" && n < 15){
+        b.dataset.disabled = "1";
+        b.disabled = true;
+        b.style.opacity = ".35";
+      }
+
+      b.addEventListener("click", ()=>addNumber(n));
+      numbersEl.appendChild(b);
+    }
+  }
+
+  function syncMobilePanels(){
+    if (!isMobile()) return;
+
+    if (panelInput && consoleDesktop && consoleDesktop.parentElement !== panelInput){
+      panelInput.innerHTML = "";
+      panelInput.appendChild(consoleDesktop);
+    }
+
+    panelCricket.innerHTML = "";
+    if (state && state.mode === "cricket"){
+      panelCricket.appendChild(cricketBoardDesktop);
+    } else {
+      panelCricket.innerHTML = `<div class="muted" style="padding:10px">Le mode Cricket n’est pas sélectionné.</div>`;
+    }
+
+    panelHistory.innerHTML = "";
+    const historyBlock = document.createElement("div");
+    historyBlock.className = "card";
+    historyBlock.style.background = "rgba(255,255,255,.55)";
+    historyBlock.style.height = "100%";
+    historyBlock.style.display = "flex";
+    historyBlock.style.flexDirection = "column";
+    historyBlock.innerHTML = `
+      <b>Historique</b>
+      <div class="muted" style="margin:6px 0 10px">Derniers tours en haut</div>
+    `;
+    const h = historyEl;
+    h.style.height = "100%";
+    h.style.maxHeight = "none";
+    historyBlock.appendChild(h);
+    panelHistory.appendChild(historyBlock);
+  }
+
+  function setMobileView(view){
+    mobileView = view;
+
+    tabInput.classList.toggle("active", view==="input");
+    tabCricket.classList.toggle("active", view==="cricket");
+    tabHistory.classList.toggle("active", view==="history");
+
+    panelInput.classList.toggle("active", view==="input");
+    panelCricket.classList.toggle("active", view==="cricket");
+    panelHistory.classList.toggle("active", view==="history");
+
+    saveState();
+  }
+
+  function render(){
+    if (!state) return;
+
+    renderScoreboard();
+
+    const p = state.players[state.current];
+    turnLabelEl.textContent = state.finished ? "Partie terminée" : `🎯 ${p.name}, à toi de jouer !`;
+
+    renderCricketBoard();
+    renderHistory();
+
+    setMult(state.mult || 1);
+    updateConsole();
+
+    if (state.mode === "x01"){
+      rulesNoteEl.innerHTML = `X01 : si le total fait passer sous 0 → <b>bust</b>.`;
+    } else if (state.mode === "countup"){
+      rulesNoteEl.textContent = `Count Up : addition simple.`;
+    } else {
+      rulesNoteEl.innerHTML = `Cricket : fermer à 3 marques.`;
+    }
+
+    if (isMobile()){
+      syncMobilePanels();
+      setMobileView(mobileView || "input");
+    }
+
+    saveState();
+  }
+
+  function applyTurn(){
+    if (!state || state.finished) return;
+
+    const idx = state.current;
+    const p = state.players[idx];
+
+    pushUndoSnapshot();
+
+    const before = p.score;
+    let after = before;
+    let kind = "ok";
+    const darts = (state.currentDarts||[]).map(d=>d.label);
+
+    if (state.mode === "x01"){
+      const val = getTotal();
+      after = before - val;
+      if (after < 0){
+        after = before;
+        kind = "bust";
+      } else {
+        p.score = after;
+        p.turns += 1;
+        if (after === 0){
+          kind = "win";
+          setFinished(idx);
+        }
+      }
+      state.history.unshift({ player:p.name, input: val, darts, before, after, kind, at: Date.now() });
+
+      state.currentDarts = [];
+      if (!state.finished){
+        if (kind !== "bust") nextPlayer();
+      }
+      render();
+      return;
+    }
+
+    if (state.mode === "countup"){
+      const val = getTotal();
+      after = before + val;
+      p.score = after;
+      p.turns += 1;
+
+      state.history.unshift({ player:p.name, input: val, darts, before, after, kind, at: Date.now() });
+
+      state.currentDarts = [];
+      nextPlayer();
+      render();
+      return;
+    }
+
+    // Cricket
+    let turnPointsGained = 0;
+
+    for (const d of (state.currentDarts||[])){
+      if (d.label === "MISS") continue;
+
+      if (d.label === "SB"){
+        const res = cricketApplyHit(idx, { targetKey: "B", marksAdded: 1, pointsPerExtraMark: BULL_POINTS_PER_MARK });
+        turnPointsGained += res.addedPoints;
+        continue;
+      }
+      if (d.label === "DB"){
+        const res = cricketApplyHit(idx, { targetKey: "B", marksAdded: 2, pointsPerExtraMark: BULL_POINTS_PER_MARK });
+        turnPointsGained += res.addedPoints;
+        continue;
+      }
+
+      if (d.meta && d.meta.type === "num"){
+        const n = d.meta.n;
+        const mult = d.meta.mult;
+        if (n < 15 || n > 20) continue;
+
+        const res = cricketApplyHit(idx, { targetKey: String(n), marksAdded: mult, pointsPerExtraMark: n });
+        turnPointsGained += res.addedPoints;
+      }
+    }
+
+    p.turns += 1;
+    after = p.score;
+
+    if (cricketCheckWin(idx)){
+      kind = "win";
+      setFinished(idx);
+    }
+
+    state.history.unshift({
+      player: p.name,
+      input: turnPointsGained,
+      darts,
+      before,
+      after,
+      kind,
+      at: Date.now()
+    });
+
+    state.currentDarts = [];
+    if (!state.finished) nextPlayer();
+
+    render();
+  }
+
+  function undo(){
+    if (!state || state.undoStack.length === 0) return;
+    const snap = state.undoStack.shift();
+    state.players = snap.players;
+    state.current = snap.current;
+    state.finished = snap.finished;
+    state.history = snap.history;
+    state.currentDarts = snap.currentDarts || [];
+    state.mult = snap.mult || 1;
+    state.cricket = snap.cricket;
+    render();
+  }
+
+  function resetGameKeepSetup(){
+    const mode = state.mode;
+    const startScore = state.startScore;
+
+    state.players = state.players.map(p => ({
+      name: p.name,
+      score: mode === "x01" ? startScore : 0,
+      turns: 0,
+      isWinner: false
+    }));
+
+    state.current = 0;
+    state.finished = false;
+    state.history = [];
+    state.undoStack = [];
+    state.currentDarts = [];
+    state.mult = 1;
+
+    if (mode === "cricket"){
+      state.cricket = { marks: createCricketMarks(state.players.length) };
+    } else {
+      delete state.cricket;
+    }
+
+    render();
+  }
+
+  // Setup events
+  numPlayersEl.addEventListener("change", renderNameInputs);
+  modeEl.addEventListener("change", () => {
+    startScoreEl.disabled = (modeEl.value !== "x01");
+  });
+
+  startBtn.addEventListener("click", () => {
+    state = createGameFromSetup();
+    showGame();
+    buildNumbers();
+    mobileView = "input";
+    render();
+  });
+
+  loadBtn.addEventListener("click", () => {
+    const loaded = loadState();
+    if (!loaded) { alert("Aucune partie sauvegardée trouvée."); return; }
+    state = loaded;
+
+    if (state.mode === "cricket" && (!state.cricket || !state.cricket.marks)){
+      state.cricket = { marks: createCricketMarks(state.players.length) };
+    }
+    showGame();
+    buildNumbers();
+    render();
+  });
+
+  // Game events
+  mS.addEventListener("click", ()=>setMult(1));
+  mD.addEventListener("click", ()=>setMult(2));
+  mT.addEventListener("click", ()=>setMult(3));
+
+  missBtn.addEventListener("click", ()=>addDart("MISS", 0, {type:"miss"}));
+  sbBtn.addEventListener("click", ()=>addDart("SB", 25, {type:"bull", marks:1}));
+  dbBtn.addEventListener("click", ()=>addDart("DB", 50, {type:"bull", marks:2}));
+
+  backBtn.addEventListener("click", backDart);
+  clearBtn.addEventListener("click", clearDarts);
+
+  applyBtn.addEventListener("click", applyTurn);
+  undoBtn.addEventListener("click", undo);
+
+  resetBtn.addEventListener("click", () => {
+    if (!confirm("Réinitialiser la partie ?")) return;
+    resetGameKeepSetup();
+  });
+
+  newGameBtn.addEventListener("click", () => {
+    if (!confirm("Revenir à l'écran de configuration ?")) return;
+    state = null;
+    showSetup();
+  });
+
+  // Mobile tabs
+  tabInput.addEventListener("click", ()=>setMobileView("input"));
+  tabCricket.addEventListener("click", ()=>setMobileView("cricket"));
+  tabHistory.addEventListener("click", ()=>setMobileView("history"));
+
+  // Keyboard shortcuts
+  window.addEventListener("keydown", (e) => {
+    if (!state || setupEl.style.display !== "none") return;
+    if (e.key === "Enter") { e.preventDefault(); if (!applyBtn.disabled) applyTurn(); }
+    if (e.key === "Backspace") { e.preventDefault(); backDart(); }
+    if (e.key === "Escape") { e.preventDefault(); clearDarts(); }
+  });
+
+  window.addEventListener("resize", () => { if (state) render(); });
+
+  // init
+  renderNameInputs();
+  startScoreEl.disabled = (modeEl.value !== "x01");
+  showSetup();
+})();
+</script>
+
+<!-- Service Worker -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js");
+  }
+</script>
+
+</body>
+</html>
